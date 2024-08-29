@@ -94,6 +94,20 @@
 .button img {
   width: 42%;
 }
+.saveAdviceButton {
+  --right-offset: 2rem;
+  --button-size: 4rem;
+  width: var(--button-size);
+  height: var(--button-size);
+
+  position: absolute;
+  right: 0;
+  top: 0;
+  /* right: calc((var(--button-size) + var(--right-offset)) * -1); */
+  /* top: calc(50% + var(--button-size) / 2 * -1); */
+
+  border-radius: 100%;
+}
 @media (min-width: 1024px) {
   .layout {
     width: 30rem;

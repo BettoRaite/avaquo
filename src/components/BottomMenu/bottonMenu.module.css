@@ -1,0 +1,63 @@
+.layout {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+}
+.contentLayout {
+  height: 10rem;
+
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+
+  background-color: var(--light-cyan);
+
+  border-radius: 10px;
+
+  overflow: hidden;
+
+  transition: all 0.3s;
+}
+.contentLayoutHidden {
+  height: 0;
+  opacity: 0;
+}
+
+:is(.toggleMenuContentButton, .toggleAdviceCollectionOverlay, .link) {
+  --toggle-menu-button-size: 3.5rem;
+  width: var(--toggle-menu-button-size);
+  height: var(--toggle-menu-button-size);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 50%;
+
+  background-color: var(--grayish-blue);
+
+  padding: 1rem;
+
+  cursor: pointer;
+}
+:is(.toggleMenuContentButton, .toggleAdviceCollectionOverlay, .link) img {
+  width: var(--toggle-menu-button-size);
+  filter: brightness(0) saturate(100%) invert(94%) sepia(8%) saturate(436%)
+    hue-rotate(153deg) brightness(93%) contrast(95%);
+}
+:is(.toggleUserSettingsButton, .toggleAdviceCollectionOverlay .link) {
+  --menu-content-buttons-size: 3.3rem;
+  width: var(--menu-content-buttons-size);
+  height: var(--menu-content-buttons-size);
+}
+.link {
+  --size: 1.5rem;
+  width: var(--size);
+  height: var(--size);
+}

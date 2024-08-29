@@ -1,0 +1,9 @@
+{
+  "projects": {
+    "staging": "avaquo-a8f6d",
+    "default": "avaquo-a8f6d"
+  },
+  "targets": {},
+  "etags": {},
+  "dataconnectEmulatorConfig": {}
+}

@@ -1,0 +1,7 @@
+.formLayout {
+  padding: 3rem;
+
+  border-radius: 1rem;
+
+  background-color: var(--neon-green);
+}

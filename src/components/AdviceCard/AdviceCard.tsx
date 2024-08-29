@@ -2,6 +2,7 @@ import styles from "./adviceCard.module.css";
 import diceIcon from "/icon-dice.svg";
 import dividerDesktopView from "/pattern-divider-desktop.svg";
 import dividerMobileView from "/pattern-divider-mobile.svg";
+import { useAuth } from "../AuthProvider";
 
 type AdviceCardProps = {
   text: string;
@@ -14,6 +15,7 @@ export function AdviceCard({
   adviceCount,
   onNextAdvice,
 }: AdviceCardProps) {
+  const { user } = useAuth();
   const dividerPath =
     window.innerWidth < DESKTOP_WIDTH ? dividerMobileView : dividerDesktopView;
   return (
@@ -21,7 +23,7 @@ export function AdviceCard({
       {adviceCount && (
         <h5 className={styles.adviceCount}>Advice #{adviceCount}</h5>
       )}
-      <blockquote className={styles.adviceText}>{`"${text}"`}</blockquote>
+      <q className={styles.adviceText}>{text}</q>
       <img
         src={dividerPath}
         alt="advice and button divider"
@@ -30,6 +32,15 @@ export function AdviceCard({
       <button className={styles.button} type="button" onClick={onNextAdvice}>
         <img src={diceIcon} alt="get next advice" />
       </button>
+      {user?.emailVerified && (
+        <button
+          className={styles.saveAdviceButton}
+          type="button"
+          onClick={onNextAdvice}
+        >
+          Save
+        </button>
+      )}
     </section>
   );
 }

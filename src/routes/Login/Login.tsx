@@ -96,9 +96,6 @@ export function Login() {
         />
         <p>{authErrorMessage}</p>
         <input type="submit" value={"Login"} />
-        <Link className="go-back-link" to={"/"}>
-          Go back
-        </Link>
       </form>
     </main>
   );

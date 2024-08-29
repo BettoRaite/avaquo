@@ -64,9 +64,6 @@ export function Signup() {
 
   return (
     <main className={styles.layout}>
-      <Link className="go-back-link" to={"/"}>
-        Go back
-      </Link>
       <form className={styles.formLayout} onSubmit={handleSubmit}>
         <FormInput
           value={name}

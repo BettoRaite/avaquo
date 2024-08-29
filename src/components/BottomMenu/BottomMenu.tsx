@@ -2,6 +2,7 @@ import accountCircleIcon from "/icons/account_circle_icon.svg";
 import signUpIcon from "/icons/signup.svg";
 import logOutIcon from "/icons/logout.svg";
 import collectionIcon from "/icons/collection.svg";
+import homeIcon from "/icons/home.svg";
 import styles from "./bottonMenu.module.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
@@ -18,6 +19,9 @@ export function BottomMenu() {
       console.error(error);
     }
   }
+  function handleToggleContent() {
+    setIsContentVisible(!isContentVisible);
+  }
   return (
     <section className={styles.layout}>
       <div
@@ -25,6 +29,9 @@ export function BottomMenu() {
           !isContentVisible && styles.contentLayoutHidden
         }`}
       >
+        <Link to={"/"} className={styles.link} onClick={handleToggleContent}>
+          <img src={homeIcon} alt="go to home page" />
+        </Link>
         <button type="button" className={styles.toggleAdviceCollectionOverlay}>
           <img src={collectionIcon} alt="toggle advice collection overlay" />
         </button>
@@ -35,11 +42,14 @@ export function BottomMenu() {
             onClick={handleLogout}
             className={styles.toggleAdviceCollectionOverlay}
           >
-            log out
-            {/* <img src={logOutIcon} alt="log out" /> */}
+            <img src={logOutIcon} alt="log out" />
           </button>
         ) : (
-          <Link to={"/signup"} className={styles.link}>
+          <Link
+            to={"/signup"}
+            className={styles.link}
+            onClick={handleToggleContent}
+          >
             <img src={signUpIcon} alt="go to sign up page" />
           </Link>
         )}
@@ -47,7 +57,7 @@ export function BottomMenu() {
       <button
         type="button"
         className={styles.toggleMenuContentButton}
-        onClick={() => setIsContentVisible(!isContentVisible)}
+        onClick={handleToggleContent}
       >
         <img src={accountCircleIcon} alt="toggle bottom menu content" />
       </button>

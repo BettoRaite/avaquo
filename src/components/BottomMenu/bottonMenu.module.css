@@ -4,7 +4,7 @@
   right: 1rem;
 }
 .contentLayout {
-  height: 10rem;
+  height: max-content;
 
   margin-bottom: 1rem;
   padding: 0.5rem;

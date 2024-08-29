@@ -46,7 +46,6 @@ export function Home() {
         adviceCount={advice?.id}
         onNextAdvice={handleNextAdvice}
       />
-      <BottomMenu />
     </main>
   );
 }

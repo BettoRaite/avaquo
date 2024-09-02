@@ -1,5 +1,5 @@
 import styles from "./emailVerificationStatus.module.css";
-import { EmailVerificationStatus } from "../AuthProvider";
+import { EmailVerificationStatus } from "../AuthProvider/AuthProvider";
 
 type EmailVerificationProps = {
   emailVerificationStatus: EmailVerificationStatus;

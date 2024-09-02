@@ -6,7 +6,7 @@ import { MAX_INPUT_LEN } from "../../lib/contants";
 import { signUpSchema } from "../../lib/schemas/schemas";
 import { ZodError } from "zod";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../components/AuthProvider";
+import { useAuth } from "../../components/AuthProvider/authContext";
 import { Link } from "react-router-dom";
 
 type FormState = {

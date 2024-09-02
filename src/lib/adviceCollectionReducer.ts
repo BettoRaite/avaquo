@@ -1,4 +1,5 @@
 import type { AdviceItem } from "./utils/types";
+
 export interface AdviceCollectionAction extends Partial<AdviceItem> {
   type: "remove_from_collection" | "add_to_collection" | "make_public";
 }

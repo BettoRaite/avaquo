@@ -1,7 +1,8 @@
 import "./index.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { AuthProvider } from "./components/AuthProvider";
+import { AuthProvider } from "./components/AuthProvider/AuthProvider";
+import { AppUserProvider } from "./components/AppUserProvider/AppUserProvider";
 import { AdviceCollectionProvider } from "./components/AdviceCollectionProvider/AdviceCollectionProvider";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Root } from "./routes/Root/Root";
@@ -38,9 +39,11 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <AuthProvider>
-      <AdviceCollectionProvider>
-        <RouterProvider router={router} />
-      </AdviceCollectionProvider>
+      <AppUserProvider>
+        <AdviceCollectionProvider>
+          <RouterProvider router={router} />
+        </AdviceCollectionProvider>
+      </AppUserProvider>
     </AuthProvider>
   </StrictMode>
 );

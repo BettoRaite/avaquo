@@ -2,18 +2,21 @@ import styles from "./adviceCard.module.css";
 import diceIcon from "/icon-dice.svg";
 import dividerDesktopView from "/pattern-divider-desktop.svg";
 import dividerMobileView from "/pattern-divider-mobile.svg";
-import { useAuth } from "../AuthProvider";
+import { useAuth } from "../AuthProvider/authContext";
+import { useAppUserContext } from "../AppUserProvider/appUserContext";
 
 type AdviceCardProps = {
   text: string;
   adviceCount?: number;
   onNextAdvice: () => void;
+  onSaveAdvice: () => void;
 };
 const DESKTOP_WIDTH = 768;
 export function AdviceCard({
   text,
   adviceCount,
   onNextAdvice,
+  onSaveAdvice,
 }: AdviceCardProps) {
   const { user } = useAuth();
   const dividerPath =
@@ -36,7 +39,7 @@ export function AdviceCard({
         <button
           className={styles.saveAdviceButton}
           type="button"
-          onClick={onNextAdvice}
+          onClick={onSaveAdvice}
         >
           Save
         </button>

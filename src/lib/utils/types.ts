@@ -1,9 +1,9 @@
 export type AdviceItem = {
   id: number;
-  text: string;
+  content: string;
 };
 
 export type AppUser = {
-  id: number;
   name: string;
+  adviceIds: number[];
 };

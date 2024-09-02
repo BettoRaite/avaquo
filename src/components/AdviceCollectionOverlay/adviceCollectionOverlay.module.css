@@ -1,0 +1,17 @@
+.layout {
+  width: 100%;
+
+  position: absolute; /* Ensure the element can move */
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+
+  transform: translateY(100%);
+  background-color: wheat;
+
+  animation: slideTop 0.3s forwards; /* Use 'forwards' to maintain the final state */
+  transition: all 1s;
+}
+.layoutVisible {
+  transform: translateY(0);
+}

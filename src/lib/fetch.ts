@@ -2,7 +2,7 @@ import { getRandInt } from "punyutils";
 import { apiResponseSchema } from "./schemas/schemas";
 
 const URL = "https://api.adviceslip.com/advice";
-export async function getAdvice() {
+export async function fetchAdvice() {
   /*
   Random advice endpoint does not work correcly,so I had to get advice by id.
   */

@@ -26,6 +26,7 @@ export function ResetPassword() {
           string,
           string[]
         >;
+
         const errors: Record<string, string> = {};
         for (const fieldName of Object.keys(formatted)) {
           errors[fieldName] = formatted[fieldName]?.[0];

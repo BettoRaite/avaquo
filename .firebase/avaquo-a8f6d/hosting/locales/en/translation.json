@@ -1,0 +1,40 @@
+{
+  "create_an_account": "Create an account",
+  "email_address": "Email address",
+  "enter_your_email": "Enter your email",
+  "password": "Password",
+  "enter_your_password": "Enter your password",
+  "sign_up": "Sign up",
+  "hide_password": "Hide password",
+  "show_password": "Show password",
+  "invalid_input_hint": "Invalid input",
+  "unexpected_error": "Oops... it seems an unexpected error occurred. Please try again or try later.",
+  "already_have_account": "Already have an account?",
+  "log_in": "Log in",
+  "forgot_password": "Forgot password?",
+  "password_error": {
+    "length_error": "Password must be at least 8 characters long.",
+    "uppercase_error": "Password must contain at least one uppercase letter.",
+    "lowercase_error": "Password must contain at least one lowercase letter.",
+    "number_error": "Password must contain at least one number.",
+    "special_char_error": "Password must contain at least one special character.",
+    "repeated_chars_error": "Password must not contain three or more consecutive identical characters."
+  },
+  "email_error": {
+    "email_must_no_be_empty": "Email must not be empty",
+    "invalid_email_address": "Invalid email address"
+  },
+  "advice_card": {
+    "advice_count": "Advice #",
+    "divider_alt": "Advice and button divider",
+    "get_next_advice": "Get next advice"
+  },
+  "locked_content": {
+    "create_account": "Create an account first or login",
+    "verify_account": "Verify your account",
+    "refresh_content": "Try refreshing the page to unlock the content"
+  },
+  "adviceCollection": {
+    "title": "'s advice collection"
+  }
+}

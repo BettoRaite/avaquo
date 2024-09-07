@@ -8,11 +8,10 @@ import { auth } from "../../lib/db/firebase";
 export function ForgotPassword() {
   const [forgotPasswordError, setForgotPasswordError] = useState("");
   // const navigate = useNavigate();
-
   return (
     <Formik
       initialValues={{ email: "" }}
-      validate={(values) => {}}
+      // validate={(values) => {}}
       onSubmit={async (values) => {
         try {
           const { email } = values;

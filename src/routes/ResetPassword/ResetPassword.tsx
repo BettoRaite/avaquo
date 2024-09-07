@@ -5,12 +5,11 @@ import { Formik, type FieldProps } from "formik";
 import { FormField } from "../../components/FormField/FormField";
 import { resetPasswordSchema } from "../../lib/schemas/schemas";
 import { verifyPasswordResetCode, confirmPasswordReset } from "firebase/auth";
-import { useAuth } from "../../components/AuthProvider/authContext";
+import { auth } from "../../lib/db/firebase";
 
 export function ResetPassword() {
   const [resetPasswordErrorMessage, setResetPasswordErrorMessage] =
     useState("");
-  const { auth } = useAuth();
   const { search } = useLocation();
   const queryParams = new URLSearchParams(search);
   const actionCode = queryParams.get("oobCode");

@@ -1,0 +1,22 @@
+.layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.languageSwitchLayout {
+  position: absolute;
+  z-index: 10;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.2rem;
+}
+.languageSwitchLayout button {
+  border: none;
+  font-weight: bold;
+  border-radius: 5px;
+  transition: all 0.3s;
+}
+.active {
+  background-color: var(--neon-green);
+}

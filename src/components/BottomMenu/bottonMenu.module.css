@@ -1,10 +1,17 @@
 .layout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
   position: fixed;
+  z-index: 10;
   bottom: 0.5rem;
   right: 0.5rem;
 }
+
 .contentLayout {
-  height: max-content;
+  height: 18rem;
   margin-bottom: 1rem;
   padding: 0.5rem;
   display: flex;
@@ -12,17 +19,17 @@
   justify-content: center;
   flex-direction: column;
   gap: 1rem;
-  background-color: var(--light-cyan);
+  background-color: var(--grayish-blue);
   border-radius: 10px;
   overflow: hidden;
-  transition: all 0.3s;
+  transition: all 0.6s;
 }
 .contentLayoutHidden {
   height: 0;
   opacity: 0;
 }
 
-:is(.toggleMenuContentButton, .toggleAdviceCollectionOverlay, .link) {
+:is(.button, .link) {
   --toggle-menu-button-size: 3.5rem;
   width: var(--toggle-menu-button-size);
   height: var(--toggle-menu-button-size);
@@ -34,19 +41,18 @@
   border: none;
   border-radius: 50%;
 
-  background-color: var(--grayish-blue);
-  box-shadow: 10px 10px 20px rgba(0, 0, 0, 0.1);
+  background-color: white;
 
   padding: 1rem;
 
   cursor: pointer;
 }
-:is(.toggleMenuContentButton, .toggleAdviceCollectionOverlay, .link) img {
+:is(.button, .link) img {
   width: var(--toggle-menu-button-size);
-  filter: brightness(0) saturate(100%) invert(94%) sepia(8%) saturate(436%)
-    hue-rotate(153deg) brightness(93%) contrast(95%);
+  filter: brightness(0) saturate(100%) invert(34%) sepia(15%) saturate(777%)
+    hue-rotate(177deg) brightness(98%) contrast(89%);
 }
-:is(.toggleUserSettingsButton, .toggleAdviceCollectionOverlay .link) {
+:is(.button .link) {
   --menu-content-buttons-size: 3.3rem;
   width: var(--menu-content-buttons-size);
   height: var(--menu-content-buttons-size);

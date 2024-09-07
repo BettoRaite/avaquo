@@ -1,0 +1,29 @@
+.layout {
+  width: 80%;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+}
+.button {
+  align-self: center;
+  background-color: transparent;
+  border: none;
+  color: var(--light-cyan);
+  font-size: 2rem;
+  cursor: pointer;
+  transition: all 0.3s;
+  opacity: 0.1;
+}
+.button:hover {
+  color: var(--tomato-red);
+  opacity: 1;
+}
+.card {
+  padding: 1rem;
+  font-weight: bold;
+  color: var(--light-cyan);
+  border: 1px solid var(--neon-green);
+  border-radius: var(--border-radius);
+  background-color: var(--dark-blue);
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
+}

@@ -1,241 +1,86 @@
-import clsx from "clsx";
+import { capitalizeFirstLetter } from "../../lib/utils/strings";
 import styles from "./signup.module.css";
 import { useState } from "react";
-import { signUpSchema } from "../../lib/schemas/schemas";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../components/AuthProvider/authContext";
-import { FirebaseError } from "firebase/app";
-import { useAppUserContext } from "../../components/AppUserProvider/appUserContext";
-import { Formik, type FieldProps } from "formik";
-
-const FIREBASE_ERRORS: Record<string, string | undefined> = {
-  "auth/email-already-in-use": "A user with that email already exists",
-};
-
-interface FormFieldProps extends Pick<FieldProps, "form"> {
-  fieldName: string;
-  labelContent: string;
-  placeholder: string;
-  autoComplete?: string;
-}
-/**
- * A Formik form field component designed to accept a
- * fieldName and apply it to all necessary input props.
- * This approach helps us adhere to the DRY (Don't Repeat Yourself) principle.
- */
-export function FormField({
-  form: { isSubmitting, values, handleChange, handleBlur, touched, errors },
-  fieldName,
-  labelContent,
-  placeholder,
-  autoComplete,
-}: FormFieldProps) {
-  return (
-    <div className={styles.formField}>
-      <label className={styles.formLabel} htmlFor={fieldName}>
-        {labelContent}
-      </label>
-      <input
-        disabled={isSubmitting}
-        id={fieldName}
-        name={fieldName}
-        type={fieldName}
-        autoComplete={autoComplete}
-        placeholder={placeholder}
-        value={values[fieldName]}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        className={clsx(styles.formInput, {
-          [styles.formInputError]: errors[fieldName] && touched[fieldName],
-        })}
-        aria-describedby={
-          errors[fieldName] && touched[fieldName] ? `${fieldName}-error` : ""
-        }
-      />
-      {errors[fieldName] && touched[fieldName] && (
-        <span
-          className={styles.invalidInputHint}
-          id={`${fieldName}-error`}
-          role="alert"
-          aria-live="assertive"
-        >
-          {errors[fieldName] as string}
-        </span>
-      )}
-    </div>
-  );
-}
+import { handleEmailPasswordSignUp } from "../../lib/db/firebase";
+import { Formik, Form } from "formik";
+import { FIREBASE_ERROR_MESSAGES } from "../../lib/utils/constants";
+import { useTranslation } from "react-i18next";
+import { createLocalizedAuthValidator } from "../../lib/validation";
+import { FormField } from "../../components/FormField/FormField";
 
 export function Signup() {
-  const [authErrorMessage, setAuthErrorMessage] = useState("");
-  const { signUp } = useAuth();
-  const { initAppUser } = useAppUserContext();
-  // [-]: If user is logged in redirect to verify page.
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
+  const { t } = useTranslation();
+  const validator = createLocalizedAuthValidator(t);
 
   return (
     <Formik
-      initialValues={{ name: "", email: "", password: "" }}
-      validate={(values) => {
-        const result = signUpSchema.safeParse(values);
-        if (result.success) {
-          return {};
-        }
-        const formatted = result.error.flatten().fieldErrors as Record<
-          string,
-          string[]
-        >;
-        const errors: Record<string, string> = {};
-        for (const fieldName of Object.keys(formatted)) {
-          errors[fieldName] = formatted[fieldName]?.[0];
-        }
-        return errors;
-      }}
-      onSubmit={async (values) => {
+      initialValues={{ email: "", password: "" }}
+      validate={validator}
+      validateOnChange={true}
+      validateOnBlur={false}
+      onSubmit={async (values, { setErrors }) => {
         try {
-          const { name, email, password } = values;
-          await signUp(email, password);
-          initAppUser({
-            name,
-            adviceIds: [],
-          });
-
-          navigate("/verify");
-        } catch (error) {
-          if (error instanceof FirebaseError) {
-            const expectedErrorMsg = FIREBASE_ERRORS[error.code];
-            const errorMsg =
-              expectedErrorMsg ??
-              `Unexpected error has occured: ${error.message}`;
-            setAuthErrorMessage(errorMsg);
-            if (!expectedErrorMsg) {
-              console.error("Failed to sign up user.\n", error);
-            }
+          const errors = validator(values);
+          if (Object.keys(errors).length > 0) {
+            setErrors(errors);
             return;
           }
-          console.error("Unexpected error during user sign-up.\nError:", error);
-          throw error;
+
+          const errorObject = await handleEmailPasswordSignUp(values);
+
+          if (errorObject) {
+            const message =
+              FIREBASE_ERROR_MESSAGES[errorObject.code] ?? errorObject.message;
+            setErrorMessage(capitalizeFirstLetter(message));
+          } else {
+            navigate("/verify");
+          }
+        } catch (error) {
+          console.error("Unexpected error during sign-up has occurred.", error);
+          setErrorMessage(t("unexpected_error"));
         }
       }}
     >
       {(props) => (
         <div className={styles.layout}>
-          <form onSubmit={props.handleSubmit} className={styles.formLayout}>
-            <h1 className={styles.formTitle}>Create an account</h1>
-            <FormField
-              form={props}
-              fieldName="name"
-              autoComplete="name"
-              labelContent="User name"
-              placeholder="Enter your name"
-            />
-
+          <Form className="form__layout">
+            <h1 className="form__title">{t("create_an_account")}</h1>
             <FormField
               form={props}
               fieldName="email"
-              autoComplete="email"
-              labelContent="email address"
-              placeholder="Enter your email"
+              labelContent={t("email_address")}
+              placeholder={t("enter_your_email")}
+              inputProps={{ autoComplete: "email" }}
             />
-
             <FormField
               form={props}
               fieldName="password"
-              labelContent="password"
-              placeholder="Enter your password"
+              labelContent={t("password")}
+              placeholder={t("enter_your_password")}
+              inputProps={{ autoComplete: "current-password" }}
             />
-            {authErrorMessage && (
-              <p className={styles.authErrorMessage}>{authErrorMessage}</p>
+            {errorMessage && (
+              <p className="form__error-message">{errorMessage}</p>
             )}
             <button
-              className={styles.signUpButton}
+              className="form__submit-button"
               type="submit"
               disabled={props.isSubmitting}
             >
-              Sign up
+              {t("sign_up")}
             </button>
-            <p className={styles.loginLink}>
-              Already have an account? <Link to={"/login"}>Log in</Link>
+            <p className="form__link-wrapper">
+              {t("already_have_account")}{" "}
+              <Link className="form__link" to="/login">
+                {t("log_in")}
+              </Link>
             </p>
-          </form>
+          </Form>
         </div>
       )}
     </Formik>
   );
 }
-/*
-  <main className={styles.layout}>
-      <form className={styles.formLayout} onSubmit={handleSubmit}>
-        <FormInput
-          value={name}
-          onChange={handleChange}
-          inputError={{
-            showError: errorFieldNames.includes("name"),
-            message: "Please enter a name",
-          }}
-          inputProps={{
-            name: "name",
-            id: "name",
-            maxLength: MAX_INPUT_LEN,
-            type: "text",
-            "aria-describedby": "name-error",
-          }}
-          label={{
-            labelContent: "your name",
-            isCapitalized: true,
-            isRequired: true,
-          }}
-        />
-        <FormInput
-          value={email}
-          onChange={handleChange}
-          inputError={{
-            showError: errorFieldNames.includes("email"),
-            message: formErrorState.email,
-          }}
-          inputProps={{
-            name: "email",
-            id: "email",
-            maxLength: MAX_INPUT_LEN,
-            type: "text",
-            autoComplete: "email",
-            "aria-describedby": "email-error",
-          }}
-          label={{
-            labelContent: "email address",
-            isCapitalized: true,
-            isRequired: true,
-          }}
-        />
-        <FormInput
-          value={password}
-          onChange={handleChange}
-          inputError={{
-            showError: errorFieldNames.includes("password"),
-            message: "Please enter a valid password",
-          }}
-          inputProps={{
-            name: "password",
-            id: "password",
-            maxLength: MAX_INPUT_LEN,
-            type: "text",
-            autoComplete: "password",
-            "aria-describedby": "password-error",
-          }}
-          label={{
-            labelContent: "password",
-            isCapitalized: true,
-            isRequired: true,
-          }}
-        />
-        <p>{authErrorMessage}</p>
-        <input type="submit" value={"Sign up"} />
-        <p>
-          Already have an account?
-          <Link to={"/login"}>Login</Link>
-        </p>
-      </form>
-    </main>
-
-
-*/

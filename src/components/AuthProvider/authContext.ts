@@ -1,14 +1,16 @@
-import { createContext, useContext } from "react";
-import type { Auth, User, UserCredential } from "firebase/auth";
+import {
+  createContext,
+  useContext,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
+import type { User } from "firebase/auth";
+
 export interface AuthContextModel {
-  auth: Auth;
   user: User | null;
+  setUser: Dispatch<SetStateAction<User | null>>;
   isEmailVerified: boolean;
-  signIn: (email: string, password: string) => Promise<UserCredential>;
-  signUp: (email: string, password: string) => Promise<UserCredential>;
-  logOut: () => Promise<void>;
-  verify: () => Promise<null | User>;
-  sendPasswordResetEmail?: (email: string) => Promise<void>;
+  setIsEmailVerified: Dispatch<SetStateAction<boolean>>;
 }
 
 export const AuthContext = createContext<AuthContextModel>(

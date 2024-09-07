@@ -8,16 +8,36 @@
   background-color: #242424;
 
   --light-cyan: hsl(193, 38%, 86%);
-  --neon-green: hsl(150, 100%, 66%);
-  --grayish-blue: hsl(217, 19%, 38%);
+  --neon-green: rgb(82, 255, 168);
+  --grayish-blue: #4e5d73;
   --dark-grayish-blue: hsl(217, 19%, 24%);
-  --dark-blue: hsl(218, 23%, 16%);
-  --tomato-red: hsl(9, 100%, 64%); /* Tomato */
+  --dark-blue: #1f2632;
+  --tomato-red: hsl(9, 100%, 64%);
+  --soft-sky-blue: hsl(200, 100%, 75%);
+  --deep-ocean-blue: hsl(210, 50%, 30%);
+
+  --coral: #ff6f61;
+  --coral-hover: #ff4c3b;
+
+  --soft-mint: #b2e0d9;
+  --soft-mint-hover: #a0d3c4;
+
+  --muted-gold: #d4af37;
+  --muted-gold-hover: #c49a2a;
+
+  --deep-teal: #004d4d;
+  --deep-teal-hover: #007b7b;
+
+  --rich-plum: #6f2c91;
+  --rich-plum-hover: #5b1f7a;
 
   --coral-red: hsl(6, 100%, 50%);
   --color-error-background: #f8d7da; /* Light red background for better visibility */
   --color-error-text: #721c24; /* Darker text color for contrast */
   --color-error-message: #e74c3c; /* Same red color for error messages */
+
+  /* DEFAULT */
+  --border-radius: 10px;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -35,6 +55,7 @@ body {
   width: 100vw;
   min-height: 100vh;
 }
+
 .firebase-emulator-warning {
   opacity: 0;
   max-width: 20%;

@@ -56,24 +56,23 @@
   margin: 0 0;
 }
 
-.buttonWrapper {
-  position: absolute;
-  bottom: -25%;
+.buttonsLayout {
+  --button-size: 4rem;
+  height: var(--button-size);
 
-  width: 100%;
+  position: relative;
+  top: calc(var(--button-size) / 2);
 
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 1rem;
 }
 
 .button {
   --button-size: 4rem;
   width: var(--button-size);
   height: var(--button-size);
-
-  position: relative;
-  top: calc(var(--button-size) / 2);
 
   display: flex;
   align-items: center;
@@ -96,17 +95,34 @@
 }
 .saveAdviceButton {
   --right-offset: 2rem;
-  --button-size: 4rem;
-  width: var(--button-size);
-  height: var(--button-size);
+  --save-advice-button-size: 3.5rem;
+  width: var(--save-advice-button-size);
+  height: var(--save-advice-button-size);
 
-  position: absolute;
-  right: 0;
-  top: 0;
-  /* right: calc((var(--button-size) + var(--right-offset)) * -1); */
-  /* top: calc(50% + var(--button-size) / 2 * -1); */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  border-radius: 100%;
+  font-size: 1.5rem;
+  color: var(--deep-ocean-blue);
+
+  border: none;
+  border-radius: 50%;
+
+  cursor: pointer;
+
+  transition: all 0.3s;
+}
+
+.saveAdviceButton:hover {
+  box-shadow: 0 0 20px rgb(91, 91, 255);
+}
+.saveAdviceButton:active {
+  --save-advice-button-size: 2rem;
+}
+.saveAdviceButtonActive img {
+  filter: brightness(0) saturate(100%) invert(57%) sepia(74%) saturate(1612%)
+    hue-rotate(321deg) brightness(102%) contrast(101%);
 }
 @media (min-width: 1024px) {
   .layout {

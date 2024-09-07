@@ -1,10 +1,12 @@
-import { useEffect, useReducer } from "react";
-import { adviceCollectionReducer } from "../../lib/adviceCollectionReducer";
-import { useAuth } from "../AuthProvider/authContext";
+import { useEffect, useState } from "react";
 import {
   AdviceCollectionContext,
-  AdviceCollectionDispatchContext,
+  type LoadStatus,
 } from "./adviceCollectionContext";
+import { useAppUserContext } from "../AppUserProvider/appUserContext";
+import { useAuth } from "../AuthProvider/authContext";
+import { getAdviceCollection } from "../../lib/db/firebase";
+import type { AdviceItem } from "../../lib/utils/types";
 
 type AdviceCollectionProviderProps = {
   children: React.ReactNode;
@@ -13,26 +15,44 @@ type AdviceCollectionProviderProps = {
 export function AdviceCollectionProvider({
   children,
 }: AdviceCollectionProviderProps) {
-  const [adviceCollection, dispatch] = useReducer(adviceCollectionReducer, []);
-  const { user } = useAuth();
+  const [adviceCollection, setAdviceCollection] = useState<AdviceItem[]>([]);
+  const [loadStatus, setLoadStatus] = useState<LoadStatus>("idle");
+  const { appUser } = useAppUserContext();
+  const { isEmailVerified } = useAuth();
 
   useEffect(() => {
-    if (!user) {
-      return;
+    // [-]: No error handling.
+    let ignoreQuery = false;
+    async function getCollection() {
+      if (appUser && isEmailVerified) {
+        setLoadStatus("loading");
+        const collection = await getAdviceCollection(appUser);
+        if (collection) {
+          if (!ignoreQuery) {
+            setAdviceCollection(collection);
+            setLoadStatus("idle");
+          }
+        } else {
+          if (!ignoreQuery) {
+            setLoadStatus("error");
+          }
+        }
+      }
     }
-    let ignoreRequest = false;
-    async function fetchCollection() {}
-    fetchCollection();
-    return () => {
-      ignoreRequest = true;
-    };
-  }, [user]);
+    getCollection();
 
+    return () => {
+      ignoreQuery = true;
+      setLoadStatus("idle");
+    };
+  }, [appUser, isEmailVerified]);
+  const value = {
+    loadStatus,
+    collection: adviceCollection,
+  };
   return (
-    <AdviceCollectionContext.Provider value={adviceCollection}>
-      <AdviceCollectionDispatchContext.Provider value={dispatch}>
-        {children}
-      </AdviceCollectionDispatchContext.Provider>
+    <AdviceCollectionContext.Provider value={value}>
+      {children}
     </AdviceCollectionContext.Provider>
   );
 }

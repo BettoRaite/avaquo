@@ -1,23 +1,13 @@
-### Auth flow
-#### Sign up
+**addToAdviceCollection**
+_Description_
+Adds passed advice data to public advice collection if there is no advice with the same text content, then returns the id of the passed in advice, otherwise returns the stored advice id.
 
-[-]: Sign up user.
-[-]: Save the user name to local storage.
-[-]: Navigate to verification page.
+Conditions:
+[-]: User must be authenticated and verified.
+- If user is not authenticated, and yet we call the function, then it is a case of an app error.(Failed authorization).
 
-*Notes*:
-- I decided to store user data in local storage
-until user email has been verified, only then
-will I store the user data in firestore. The
-reason for that is simple. 
-Imagine if the user wants to test my application he/she
-enters in valid input in the sign up
-form, then goes to the verification
-page, but never verifies and leaves
-the app. In other words, the user data
-will have to be stored in firestore indefinitely.
-
-Probably, there is a workaround that 
-which is storing user data only temprorary
-resetting the count on each log in, but this would
-require additional complex logic. 
+Steps: 
+[-]: Check if advice with the same id already exists.
+[-]: if yes, return id.
+[-]: if no, add advice data to firestore.
+[-]: Return id.

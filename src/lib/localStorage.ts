@@ -1,29 +1,27 @@
-import type { AppUser } from "./utils/types";
+import { ERROR_MESSAGES } from "./utils/constants";
+import type { UserPreferences } from "./utils/types";
 
-export const AppUserKey = "AppUserKey";
+const PREFERENCES_KEY = "APP_USER_PREFERENCES";
 
-function saveAppUser(appUser: AppUser) {
+export const saveUserPreferences = (preferences: UserPreferences) => {
   try {
-    localStorage.setItem(AppUserKey, JSON.stringify(appUser));
-    return appUser;
+    localStorage.setItem(PREFERENCES_KEY, JSON.stringify(preferences));
   } catch (error) {
-    console.error("Failed to save app user to local storage", error);
-    return null;
+    console.error(
+      ERROR_MESSAGES.common.unexpectedError,
+      `Preferences:${preferences}\n${error}`
+    );
   }
-}
-function loadAppUser() {
-  const json = localStorage.getItem(AppUserKey);
-  if (!json) {
-    return null;
-  }
+};
+export const loadUserPreferences = (): null | UserPreferences => {
   try {
-    return JSON.parse(json);
+    const json = localStorage.getItem(PREFERENCES_KEY);
+    if (json) {
+      return JSON.parse(json);
+    }
+    return null;
   } catch (error) {
-    console.error("Error parsing app user data:", error);
+    console.error(ERROR_MESSAGES.common.unexpectedError, error);
     return null;
   }
-}
-export const storage = {
-  loadAppUser,
-  saveAppUser,
 };

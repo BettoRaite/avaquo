@@ -1,20 +1,17 @@
-export class NonExistentUserError extends Error {
-  constructor() {
-    super();
-    this.name = "NonExistentUserError";
-    this.message = "User does not exist.";
-  }
-}
+export class AppError extends Error {
+  public readonly isOperational: boolean;
 
-export type AuthorizationErrorDetails = {
-  action: string;
-};
-export class UserNotAuthorizedError extends Error {
-  constructor(details?: AuthorizationErrorDetails) {
-    super();
-    this.name = "UserNotAuthorizedError";
-    this.message = `User is not authorized.\nDetails: ${JSON.stringify(
-      details
-    )}`;
+  constructor(description: string, isOperational: boolean) {
+    super(description);
+
+    Object.setPrototypeOf(this, new.target.prototype);
+
+    this.isOperational = isOperational;
+
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    } else {
+      this.stack = new Error().stack;
+    }
   }
 }

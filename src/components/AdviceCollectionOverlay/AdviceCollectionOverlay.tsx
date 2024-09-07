@@ -1,70 +1,48 @@
-import { useAppUserContext } from "../AppUserProvider/appUserContext";
 import styles from "./adviceCollectionOverlay.module.css";
-import { useEffect, useRef, useState } from "react";
-// [-]: Read advice collection.
-
-import { getAdviceCollection } from "../../lib/db";
-import type { AdviceItem } from "../../lib/utils/types";
-const sectionStyle = styles.layout;
+import { useAdviceCollectionContext } from "../AdviceCollectionProvider/adviceCollectionContext";
+import { MdCancel } from "react-icons/md";
+import { AdviceCollectionCard } from "../AdviceCollectionCard/AdviceCollectionCard";
+import { useAppUserContext } from "../AppUserProvider/appUserContext";
+import { capitalizeFirstLetter } from "../../lib/utils/strings";
+import { LockedContent } from "../LockedContent/LockedContent";
+import { useTranslation } from "react-i18next";
+import { CloseButton } from "../CloseButton/CloseButton";
 
 type AdviceCollectionOverlayProps = {
   onClose: () => void;
 };
-type LoadStatus = "error" | "loading" | "idle";
 export function AdviceCollectionOverlay({
   onClose,
 }: AdviceCollectionOverlayProps) {
-  const sectionRef = useRef<HTMLElement | null>(null);
-  const [collection, setCollection] = useState<AdviceItem[]>([]);
-  const [loadStatus, setLoadStatus] = useState<LoadStatus>("idle");
+  const { collection } = useAdviceCollectionContext();
   const { appUser } = useAppUserContext();
+  const { t } = useTranslation();
 
-  useEffect(() => {
-    let ignoreQuery = false;
-    async function getCollection() {
-      if (appUser) {
-        setLoadStatus("loading");
-        const collection = await getAdviceCollection(appUser);
-        if (collection) {
-          if (!ignoreQuery) {
-            setCollection(collection);
-            setLoadStatus("idle");
-          }
-        } else {
-          if (!ignoreQuery) {
-            setLoadStatus("error");
-          }
-        }
-      }
-    }
-    getCollection();
+  let content = <LockedContent onClose={onClose} />;
 
-    return () => {
-      ignoreQuery = true;
-      setLoadStatus("idle");
-    };
-  }, [appUser]);
+  if (appUser) {
+    content = (
+      <>
+        <div>
+          <h1 className={styles.title}>
+            {capitalizeFirstLetter(appUser?.name ?? "")}{" "}
+            {t("adviceCollection.title")}
+          </h1>
+          <CloseButton onClose={onClose} />
+        </div>
 
-  useEffect(() => {
-    const section = sectionRef.current;
-    if (section) {
-      section.className = `${sectionStyle} ${styles.layoutVisible}`;
-    }
-    return () => {
-      if (section) {
-        section.className = sectionStyle;
-      }
-    };
-  }, []);
+        <div className={styles.cardsLayout}>
+          {collection.map((item) => {
+            return <AdviceCollectionCard key={item.id} adviceItem={item} />;
+          })}
+        </div>
+      </>
+    );
+  }
 
   return (
-    <section ref={sectionRef} className={sectionStyle}>
-      <button type="button" onClick={onClose}>
-        close
-      </button>
-      {collection.map((item) => {
-        return <p key={item.id}>{item.content}</p>;
-      })}
+    <section className={`${styles.layout} ${!appUser && styles.layoutLocked}`}>
+      {content}
     </section>
   );
 }

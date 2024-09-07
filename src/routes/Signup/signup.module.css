@@ -12,85 +12,9 @@
   box-sizing: border-box;
   padding: 1.5rem 1rem;
   margin: 2rem auto;
+  margin-bottom: 5rem;
   border-radius: 0.5rem;
   color: var(--dark-grayish-blue);
-}
-
-.formTitle {
-  font-size: 1.6rem;
-  margin: 0 0 2rem;
-}
-
-.loginLink {
-  text-align: center;
-  margin-top: 1.5rem;
-  font-size: 0.9rem;
-}
-
-.formField {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.formLabel {
-  font-size: 0.9rem;
-  text-transform: capitalize;
-  color: var(--dark-grayish-blue);
-  font-weight: normal;
-}
-
-.formInput {
-  padding: 0.5rem 0.9rem;
-  border-radius: var(--border-radius);
-  border: 1px solid white;
-  color: var(--dark-grayish-blue);
-  font-weight: normal;
-  font-size: 0.95rem;
-  transition: border-color 0.3s;
-  outline: none;
-}
-
-.formInputError {
-  border: 1px solid var(--tomato-red);
-}
-
-:is(.formInput):not(.formInputError):focus {
-  border-color: var(--dark-grayish-blue);
-}
-
-.invalidInputHint {
-  width: max-content;
-  padding: 0.3rem;
-  font-size: 0.75rem;
-  font-weight: bold;
-  border-radius: 3px;
-  color: var(--tomato-red);
-}
-.authErrorMessage {
-  text-align: center;
-  padding: 0.5rem;
-  background-color: var(--dark-grayish-blue);
-  border-radius: 5px;
-  color: var(--tomato-red);
-}
-.signUpButton {
-  width: 100%;
-  margin-top: 2rem;
-  padding: 0.7rem;
-  border-radius: 5px;
-  border: none;
-  color: var(--dark-grayish-blue);
-  font-size: 1rem;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.signUpButton:hover {
-  background-color: var(--dark-grayish-blue);
-  color: var(--neon-green);
 }
 
 @media (min-width: 1024px) {

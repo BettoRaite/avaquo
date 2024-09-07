@@ -1,63 +1,122 @@
 import styles from "./verifyEmail.module.css";
-import { useEffect, useState } from "react";
-import { Link, redirect } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useAuth } from "../../components/AuthProvider/authContext";
+import mailIcon from "/public/icons/mail-filled.svg";
+import { useState, useEffect, useCallback } from "react";
+import { sendVerification } from "../../lib/db/firebase";
+import { FIREBASE_ERROR_MESSAGES } from "../../lib/utils/constants";
+import { ERROR_MESSAGES } from "../../lib/utils/constants";
+import { useTranslation } from "react-i18next";
 
-export type verificationState =
-  | "sent"
-  | "error"
-  | "loading"
-  | "idle"
-  | "verified";
+export type verificationStatus = "sent" | "error" | "loading" | "verified";
 
 export function VerifyEmail() {
   const [verificationStatus, setVerificationStatus] =
-    useState<verificationState>("idle");
-  const { user, verify } = useAuth();
-  useEffect(() => {
-    let intervalId: number | undefined;
-    async function init() {
-      setVerificationStatus("loading");
-      try {
-        if (user) {
-          if (user.emailVerified) {
-            redirect("/");
-            return;
-          }
+    useState<verificationStatus>("loading");
+  const [errorMessage, setErrorMessage] = useState("");
+  const { user, setIsEmailVerified } = useAuth();
+  const { t } = useTranslation();
 
-          if (await verify()) {
-            setVerificationStatus("sent");
-            intervalId = setInterval(() => {
-              user.reload().then(() => {
-                if (user.emailVerified) {
-                  setVerificationStatus("verified");
-                }
-              });
-            }, 100);
-            return;
-          }
-          setVerificationStatus("error");
-        }
-      } catch (error) {
-        console.error("Failed to verify user email", error);
+  const handleSendingEmailVerification = useCallback(async () => {
+    try {
+      const errorObject = await sendVerification();
+      if (errorObject) {
+        setErrorMessage(
+          FIREBASE_ERROR_MESSAGES[errorObject.code] ?? errorObject.message
+        );
+        setVerificationStatus("error");
+        return;
       }
+      setVerificationStatus("sent");
+    } catch (error) {
+      console.error(ERROR_MESSAGES.common.unexpectedError, error);
+      setVerificationStatus("error");
     }
-    init();
+  }, []);
+
+  useEffect(() => {
+    if (user?.emailVerified) {
+      return;
+    }
+    const intervalId = setInterval(async () => {
+      await user?.reload();
+      if (user?.emailVerified) {
+        setIsEmailVerified(true);
+        setVerificationStatus("verified");
+      }
+    }, 300);
     return () => {
       clearInterval(intervalId);
     };
-  }, [verify, user]);
+  }, [user, setIsEmailVerified]);
+
+  useEffect(() => {
+    if (user?.emailVerified) {
+      setVerificationStatus("verified");
+      return;
+    }
+    if (user) {
+      handleSendingEmailVerification();
+    }
+  }, [user, handleSendingEmailVerification]);
+
+  function handleClick() {
+    handleSendingEmailVerification();
+  }
+
+  let content = <p>{t("loading_message")}</p>;
+  switch (verificationStatus) {
+    case "sent": {
+      content = (
+        <>
+          <p>
+            {t("verify_account.almost_there")} <br />
+            <span className={styles.email}>{user?.email}</span>
+          </p>
+          <p className={styles.instructions}>
+            {t("verify_account.instructions")}{" "}
+            <span className={styles.bold}>
+              {t("verify_account.check_spam")}
+            </span>
+          </p>
+          <p>{t("verify_account.cant_find")}</p>
+          <button type="button" className={styles.button} onClick={handleClick}>
+            {t("verify_account.resend_email")}
+          </button>
+        </>
+      );
+      break;
+    }
+    case "error": {
+      content = errorMessage ? (
+        <p>{errorMessage}</p>
+      ) : (
+        <p className={styles.errorMessage}>{t("unexpected_error")}</p>
+      );
+      break;
+    }
+    case "verified": {
+      content = (
+        <p>
+          {t("verify_account.go_home")}{" "}
+          <Link className="form__link" to={"/"}>
+            {t("home")}
+          </Link>
+        </p>
+      );
+    }
+  }
   return (
     <main className={styles.layout}>
-      <h1>Now, Let's verify your email!</h1>
-      {verificationStatus === "loading" && <p>Loading, please wait...</p>}
-      {verificationStatus === "sent" && <p>Check your inbox or spam</p>}
-      {verificationStatus === "error" && <p>Ops...an error has occured!</p>}
-      {verificationStatus === "verified" && (
-        <p>
-          Verified <Link to={"/"}>Go back</Link>
-        </p>
-      )}
+      <div className={styles.banner}>
+        <img src={mailIcon} alt={t("verify_account.mail_alt")} />
+      </div>
+      <h3 className={styles.title}>
+        {verificationStatus === "verified"
+          ? t("verify_account.verified")
+          : t("verify_account.verify")}{" "}
+      </h3>
+      <div className={styles.content}>{content}</div>
     </main>
   );
 }

@@ -1,4 +1,12 @@
 import { z } from "zod";
+import { PASSWORD_MIN_LEN } from "../utils/constants";
+
+const SupportedLocales = z.enum(["ru", "en"]);
+export type SupportedLocales = z.infer<typeof SupportedLocales>;
+
+export const userPreferencesSchema = z.object({
+  lang: SupportedLocales.optional(),
+});
 
 export const apiResponseSchema = z.object({
   slip: z.object({
@@ -17,16 +25,81 @@ export const appUserSchema = z.object({
   adviceIds: z.array(z.number()),
 });
 
-export const signUpSchema = z.object({
-  name: z
-    .string()
-    .min(1, { message: "Name is required" })
-    .max(50, { message: "Name must be at most 50 characters long" }),
-  email: z.string().email({ message: "Invalid email address" }),
-  password: z
-    .string()
-    .min(8, { message: "Password must be at least 8 characters long" })
-    .max(100, { message: "Password must be at most 100 characters long" })
-    .regex(/[a-zA-Z]/, { message: "Password must contain at least one letter" })
-    .regex(/[0-9]/, { message: "Password must contain at least one number" }),
+const passwordSchema = z.string().superRefine((password, ctx) => {
+  const isLongEnough = password.length >= PASSWORD_MIN_LEN;
+  const hasUpperCase = /[A-Z]/.test(password);
+  const hasLowerCase = /[a-z]/.test(password);
+  const hasNumber = /\d/.test(password);
+  const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  const hasNoRepeatedChars = !/(.)\1{2,}/.test(password);
+  if (!isLongEnough) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.too_small,
+      minimum: PASSWORD_MIN_LEN,
+      type: "number",
+      inclusive: true,
+      message: "length_error",
+    });
+  }
+  if (!hasUpperCase) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.invalid_string,
+      validation: "regex",
+      fatal: true,
+      message: "uppercase_error",
+    });
+  }
+  if (!hasLowerCase) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.invalid_string,
+      validation: "regex",
+      fatal: true,
+      message: "lowercase_error",
+    });
+  }
+  if (!hasNumber) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.invalid_string,
+      validation: "regex",
+      fatal: true,
+      message: "number_error",
+    });
+  }
+  if (!hasSpecialChar) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.invalid_string,
+      validation: "regex",
+      fatal: true,
+      message: "special_char_error",
+    });
+  }
+  if (!hasNoRepeatedChars) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: "repeated_chars_error",
+    });
+  }
 });
+
+export const authSchema = z.object({
+  email: z
+    .string()
+    .min(1, { message: "email_must_no_be_empty" })
+    .email({ message: "invalid_email_address" }),
+  password: passwordSchema,
+});
+
+export const resetPasswordSchema = z
+  .object({
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
+  })
+  .superRefine(({ password, confirmPassword }, ctx) => {
+    if (password !== confirmPassword) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Passwords did not match.",
+        path: ["confirmPassword"],
+      });
+    }
+  });

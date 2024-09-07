@@ -1,102 +1,101 @@
-import styles from "./login.module.css";
-import type { ChangeEvent, FormEvent } from "react";
-import { FormInput } from "../../components/FormInput/FormInput";
+import { capitalizeFirstLetter } from "../../lib/utils/strings";
 import { useState } from "react";
-import { MAX_INPUT_LEN } from "../../lib/contants";
-import { signUpSchema } from "../../lib/schemas/schemas";
-import { ZodError } from "zod";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../components/AuthProvider/authContext";
-import { Link } from "react-router-dom";
-
-type FormState = {
-  email: string;
-  password: string;
-};
+import { Formik } from "formik";
+import { FormField } from "../../components/FormField/FormField";
+import { FIREBASE_ERROR_MESSAGES } from "../../lib/utils/constants";
+import { handleEmailPasswordSignIn } from "../../lib/db/firebase";
+import { createLocalizedAuthValidator } from "../../lib/validation";
+import { useTranslation } from "react-i18next";
 
 export function Login() {
-  const [formState, setFormState] = useState<FormState>({
-    email: "",
-    password: "",
-  });
-  const [errorFieldNames, setErrorFieldNames] = useState<string[]>([]);
-  const [authErrorMessage, setAuthErrorMessage] = useState<string>("");
-  const { email, password } = formState;
-  const { signIn } = useAuth();
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
-
-  function handleChange(e: ChangeEvent<HTMLInputElement>) {
-    const fieldName = e.target.name;
-    const fieldValue = e.target.value;
-    setFormState({
-      ...formState,
-      [fieldName]: fieldValue,
-    });
-  }
-
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    try {
-      await signIn(email, password);
-      navigate("/");
-    } catch (error) {
-      if (error instanceof ZodError) {
-        const errorObject = error.format();
-        const errorFormFields = Object.keys(errorObject._errors);
-        setErrorFieldNames(errorFormFields);
-      }
-      console.error("Failed to sign up", error);
-    }
-  }
+  const { user } = useAuth();
+  const { t } = useTranslation();
+  const validator = createLocalizedAuthValidator(t);
 
   return (
-    <main className={styles.layout}>
-      <form className={styles.formLayout} onSubmit={handleSubmit}>
-        <FormInput
-          value={email}
-          onChange={handleChange}
-          inputError={{
-            showError: errorFieldNames.includes("email"),
-            message: "Please enter a valid email address",
-          }}
-          inputProps={{
-            name: "email",
-            id: "email",
-            maxLength: MAX_INPUT_LEN,
-            type: "text",
-            autoComplete: "email",
-            "aria-describedby": "email-error",
-          }}
-          label={{
-            labelContent: "email address",
-            isCapitalized: true,
-            isRequired: true,
-          }}
-        />
-        <FormInput
-          value={password}
-          onChange={handleChange}
-          inputError={{
-            showError: errorFieldNames.includes("password"),
-            message: "Please enter a valid password",
-          }}
-          inputProps={{
-            name: "password",
-            id: "password",
-            maxLength: MAX_INPUT_LEN,
-            type: "password",
-            autoComplete: "password",
-            "aria-describedby": "password-error",
-          }}
-          label={{
-            labelContent: "password",
-            isCapitalized: true,
-            isRequired: true,
-          }}
-        />
-        <p>{authErrorMessage}</p>
-        <input type="submit" value={"Login"} />
-      </form>
-    </main>
+    <Formik
+      initialValues={{ email: "", password: "" }}
+      validate={validator}
+      validateOnChange={true}
+      validateOnBlur={false}
+      onSubmit={async (values, { setErrors }) => {
+        try {
+          if (user) {
+            setErrorMessage("You are already signed in.");
+            return;
+          }
+          const errors = validator(values);
+          if (Object.keys(errors).length > 0) {
+            setErrors(errors);
+            return;
+          }
+
+          const errorObject = await handleEmailPasswordSignIn(values);
+
+          if (errorObject) {
+            const message =
+              FIREBASE_ERROR_MESSAGES[errorObject.code] ?? errorObject.message;
+            setErrorMessage(capitalizeFirstLetter(message));
+          } else {
+            navigate("/");
+          }
+        } catch (error) {
+          console.error("Unexpected error during log-in has occured.", error);
+          setErrorMessage(t("unexpected_error"));
+        }
+      }}
+    >
+      {(props) => (
+        <div className={"form-wrapper"}>
+          <form onSubmit={props.handleSubmit} className={"form__layout"}>
+            <h1 className={"form__title"}>{t("log_in")}</h1>{" "}
+            {/* Translated title */}
+            <FormField
+              form={props}
+              fieldName="email"
+              autoComplete="email"
+              labelContent={t("email_address")} // Translated label
+              placeholder={t("enter_your_email")} // Translated placeholder
+            />
+            <FormField
+              form={props}
+              fieldName="password"
+              labelContent={t("password")} // Translated label
+              placeholder={t("enter_your_password")} // Translated placeholder
+            />
+            <Link
+              className="form__link"
+              style={{
+                fontSize: "0.8rem",
+              }}
+              to={"/forgotPassword"}
+            >
+              {t("forgot_password")}{" "}
+              {/* Add this key to your translation file */}
+            </Link>
+            {errorMessage && (
+              <p className={"form__error-message"}>{errorMessage}</p>
+            )}
+            <button
+              className={"form__submit-button"}
+              type="submit"
+              disabled={props.isSubmitting}
+            >
+              {t("log_in")} {/* Translated button text */}
+            </button>
+            <p className={"form__link-wrapper"}>
+              {t("already_have_account")} {/* Translated text */}
+              <Link className="form__link" to={"/signup"}>
+                {t("create_an_account")} {/* Translated link text */}
+              </Link>
+            </p>
+          </form>
+        </div>
+      )}
+    </Formik>
   );
 }

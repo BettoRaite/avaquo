@@ -5,7 +5,10 @@ import {
   connectFirestoreEmulator,
 } from "firebase/firestore";
 import { getAuth, connectAuthEmulator } from "firebase/auth";
-
+export * from "./adviceCollection/adviceCollection";
+export * from "./appUser/appUser";
+export * from "./auth/auth";
+export * from "./utils/index";
 const {
   VITE_API_KEY,
   VITE_AUTH_DOMAIN,
@@ -29,7 +32,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 export const firestore = getFirestore(app);
-export const auth = getAuth();
+export const auth = getAuth(app);
 export const usersCollectionRef = collection(firestore, "users");
 const ADVICE_COLLECTION_NAME = "public_advice";
 export const adviceCollectionRef = collection(

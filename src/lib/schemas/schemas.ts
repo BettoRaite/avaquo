@@ -81,12 +81,18 @@ const passwordSchema = z.string().superRefine((password, ctx) => {
   }
 });
 
+const emailSchema = z
+  .string()
+  .min(1, { message: "email_must_no_be_empty" })
+  .email({ message: "invalid_email_address" });
+
 export const authSchema = z.object({
-  email: z
-    .string()
-    .min(1, { message: "email_must_no_be_empty" })
-    .email({ message: "invalid_email_address" }),
+  email: emailSchema,
   password: passwordSchema,
+});
+
+export const forgotPasswordSchema = z.object({
+  email: emailSchema,
 });
 
 export const resetPasswordSchema = z
@@ -98,7 +104,7 @@ export const resetPasswordSchema = z
     if (password !== confirmPassword) {
       ctx.addIssue({
         code: "custom",
-        message: "Passwords did not match.",
+        message: "passwords_did_not_match",
         path: ["confirmPassword"],
       });
     }

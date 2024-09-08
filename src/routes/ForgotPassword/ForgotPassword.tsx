@@ -1,41 +1,52 @@
 import styles from "../Signup/signup.module.css";
 import { useState } from "react";
-import { Formik, type FieldProps } from "formik";
+import { Formik } from "formik";
 import { FormField } from "../../components/FormField/FormField";
-import { sendPasswordResetEmail } from "firebase/auth";
-import { auth } from "../../lib/db/firebase";
+import { useTranslation } from "react-i18next";
+import { createLocalizedEmailValidator } from "../../lib/validation";
+import { handleSendingPasswordResetEmail } from "../../lib/db/firebase";
+import { FIREBASE_ERROR_MESSAGES } from "../../lib/utils/constants";
+import { capitalizeFirstLetter } from "../../lib/utils/strings";
 
 export function ForgotPassword() {
-  const [forgotPasswordError, setForgotPasswordError] = useState("");
-  // const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState("");
+  const { t } = useTranslation();
   return (
     <Formik
       initialValues={{ email: "" }}
-      // validate={(values) => {}}
+      validate={createLocalizedEmailValidator(t)}
       onSubmit={async (values) => {
         try {
-          const { email } = values;
-          await sendPasswordResetEmail(auth, email, {
-            url: `http://localhost:5173/resetPassword?email=${email}`,
-            dynamicLinkDomain: `http://localhost:5173/resetPassword?email=${email}`,
-          });
+          const errorObject = await handleSendingPasswordResetEmail(values);
+
+          if (errorObject) {
+            const message =
+              FIREBASE_ERROR_MESSAGES[errorObject.code] ?? errorObject.message;
+            setErrorMessage(capitalizeFirstLetter(message));
+          }
         } catch (error) {
-          console.error(error);
+          console.error(
+            "Unexpected error during sending reset email has occurred.",
+            error
+          );
+          setErrorMessage(t("unexpected_error"));
         }
       }}
     >
       {(props) => (
         <div className={styles.layout}>
           <form onSubmit={props.handleSubmit} className={styles.formLayout}>
-            <h1 className={styles.formTitle}>Receive reset password link</h1>
+            <h1 className={styles.formTitle}>
+              {t("receive_reset_password_link")}Receive reset password link
+            </h1>
             <FormField
               form={props}
               fieldName="email"
               autoComplete="email"
-              labelContent="email address"
-              placeholder="Enter your email"
+              labelContent={t("email_address")}
+              placeholder={t("enter_your_email")}
             />
-            <button type="submit">Get link</button>
+            <button type="submit">{t("get_link")}</button>
           </form>
         </div>
       )}

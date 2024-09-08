@@ -11,3 +11,8 @@ export type AppUser = {
 };
 
 export type UserPreferences = ReturnType<typeof userPreferencesSchema.parse>;
+
+export type FirebaseErrorObject = {
+  message: string;
+  code: string;
+};

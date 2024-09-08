@@ -9,6 +9,7 @@
   "show_password": "Show password",
   "invalid_input_hint": "Invalid input",
   "unexpected_error": "Oops... it seems an unexpected error occurred. Please try again or try later.",
+  "unexpected_error_during_fetch": "Oops... it seems an unexpected error occurred. Please try refreshing the page.",
   "already_have_account": "Already have an account?",
   "log_in": "Log in",
   "forgot_password": "Forgot password?",
@@ -22,7 +23,7 @@
   },
   "email_error": {
     "email_must_no_be_empty": "Email must not be empty",
-    "invalid_email_address": "Invalid email address"
+    "invalid_email_address": "Invalid email address format"
   },
   "advice_card": {
     "advice_count": "Advice #",
@@ -30,11 +31,26 @@
     "get_next_advice": "Get next advice"
   },
   "locked_content": {
-    "create_account": "Create an account first or login",
-    "verify_account": "Verify your account",
+    "create_account": "First, create an account or log in",
+    "verify_account": "You need to verify your account",
     "refresh_content": "Try refreshing the page to unlock the content"
   },
   "adviceCollection": {
-    "title": "'s advice collection"
-  }
+    "title": "Advice collection"
+  },
+  "verify_account": {
+    "almost_there": "You're almost there! We sent an email to",
+    "instructions": "Just follow the link to confirm the account verification. If you can't find the email, try checking the ",
+    "check_spam": "spam",
+    "cant_find": "Still can't find it? No problem.",
+    "resend_email": "Resend email",
+    "verified": "Verified!",
+    "verify": "Verify your account",
+    "go_home": "Now you can go back to",
+    "mail_alt": "mail"
+  },
+  "loading_message": "Loading, please wait...",
+  "home": "home",
+  "get_link": "Get link",
+  "receive_reset_password_link": "Get reset password link"
 }

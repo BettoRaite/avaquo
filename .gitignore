@@ -25,4 +25,5 @@ starter
 *.sln
 *.sw?
 .env
+.env*
 .vercel

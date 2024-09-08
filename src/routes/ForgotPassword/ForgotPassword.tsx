@@ -47,6 +47,9 @@ export function ForgotPassword() {
               placeholder={t("enter_your_email")}
             />
             <button type="submit">{t("get_link")}</button>
+            {errorMessage && (
+              <p className="form__error-message">{errorMessage}</p>
+            )}
           </form>
         </div>
       )}

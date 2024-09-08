@@ -54,7 +54,7 @@ export function Home() {
     return () => {
       ignoreRequest = true;
     };
-  }, [refetch, language]);
+  }, [refetch, language, setToastNotification, t]);
 
   function handleNextAdvice() {
     setRefetch((prev) => !prev);
@@ -63,6 +63,7 @@ export function Home() {
   return (
     <main className={styles.layout}>
       <AdviceCard adviceItem={advice} onNextAdvice={handleNextAdvice} />
+      {isLoading && <div className={styles.loader} />}
     </main>
   );
 }

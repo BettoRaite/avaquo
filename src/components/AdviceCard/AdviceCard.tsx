@@ -13,11 +13,16 @@ import { useTranslation } from "react-i18next"; // Import useTranslation
 type AdviceCardProps = {
   adviceItem: AdviceItem;
   onNextAdvice: () => void;
+  isLoading: boolean;
 };
 
 const DESKTOP_WIDTH = 768;
 
-export function AdviceCard({ onNextAdvice, adviceItem }: AdviceCardProps) {
+export function AdviceCard({
+  onNextAdvice,
+  adviceItem,
+  isLoading,
+}: AdviceCardProps) {
   const { user } = useAuth();
   const { content, id: adviceCount } = adviceItem;
   const { t } = useTranslation(); // Use the translation hook
@@ -32,12 +37,15 @@ export function AdviceCard({ onNextAdvice, adviceItem }: AdviceCardProps) {
 
   return (
     <section className={styles.layout}>
-      {adviceCount && (
-        <h5 className={styles.adviceCount}>
-          {t("advice_card.advice_count")} {adviceCount}
-        </h5>
-      )}
-      <q className={styles.adviceText}>{content}</q>
+      <h5 className={styles.adviceCount}>
+        {content ? (
+          `${t("advice_card.advice_count")} ${adviceCount}`
+        ) : (
+          <div className={styles.loaderText} />
+        )}
+      </h5>
+
+      {content && <q className={styles.adviceText}>{content}</q>}
       <img
         src={dividerPath}
         alt={t("advice_card.divider_alt")}

@@ -34,11 +34,9 @@ export function ResetPassword() {
         return errors;
       }}
       onSubmit={async ({ password }) => {
-        console.log("resetting password");
         try {
           await verifyPasswordResetCode(auth, actionCode as string);
           await confirmPasswordReset(auth, actionCode as string, password);
-          console.log("password reset");
         } catch (error) {
           console.error(error);
         }

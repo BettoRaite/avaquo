@@ -1,6 +1,6 @@
 import { authSchema } from "./schemas/schemas";
 import type { FormikErrors, FormikValues } from "formik";
-import { TFunction } from "i18next";
+import type { TFunction } from "i18next";
 import { forgotPasswordSchema } from "./schemas/schemas";
 
 export const createLocalizedAuthValidator = (t: TFunction) => {

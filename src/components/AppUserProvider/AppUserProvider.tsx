@@ -27,9 +27,7 @@ export function AppUserProvider({ children }: AppUserProviderProps) {
           setErrorMessage("Ops...an unexpected error has occured.");
         }
       }
-      if (!nextAppUser) {
-        console.log("User has not signed in.\n", user, isEmailVerified);
-      }
+
       setAppUser(nextAppUser);
     }
     getAppUser();

@@ -9,64 +9,73 @@ import { useToastNotificationContext } from "../../components/ToastNotificationP
 import { useTranslation } from "react-i18next";
 
 export function Home() {
-  const [advice, setAdvice] = useState<AdviceItem>({
-    content: "",
-    id: 1,
-  });
-  const [isLoading, setIsLoading] = useState(false);
-  const [refetch, setRefetch] = useState(false);
+  const [advice, setAdvice] = useState<AdviceItem | null>(null);
   const { language } = useLocaleContext();
   const { setToastNotification } = useToastNotificationContext();
   const { t } = useTranslation();
-  // biome-ignore lint/correctness/useExhaustiveDependencies: <explanation>
-  useEffect(() => {
-    let ignoreRequest = false;
 
-    async function fetchAdviceData() {
+  useEffect(() => {
+    let isWaitingForResponse = true;
+
+    async function main() {
+      if (language !== "en" && isWaitingForResponse && advice) {
+        const translated = await translateText(advice.content, language);
+        if (translated) {
+          setAdvice({
+            ...advice,
+            content: translated,
+          });
+        }
+      }
+    }
+    main();
+    return () => {
+      isWaitingForResponse = false;
+    };
+  }, [language, advice]);
+
+  useEffect(() => {
+    let isWaitingForResponse = true;
+
+    async function init() {
       try {
-        setIsLoading(true);
         const { slip } = await fetchAdvice();
         const { id, advice } = slip;
         let content = advice;
 
-        if (language !== "en" && !ignoreRequest) {
+        if (language !== "en" && isWaitingForResponse) {
           const translated = await translateText(content, language);
           if (translated) {
             content = translated;
           }
         }
 
-        if (!ignoreRequest) {
+        if (isWaitingForResponse) {
           setAdvice({
             id,
             content,
           });
-          setIsLoading(false);
         }
       } catch (error) {
         console.error("Failed to fetch advice.\n", error);
         setToastNotification(t("unexpected_error_during_fetch"));
       }
     }
-
-    fetchAdviceData();
-
+    if (!advice) {
+      init();
+    }
     return () => {
-      ignoreRequest = true;
+      isWaitingForResponse = false;
     };
-  }, [refetch, language, setToastNotification, t]);
+  }, [advice, language, setToastNotification, t]);
 
   function handleNextAdvice() {
-    setRefetch((prev) => !prev);
+    setAdvice(null);
   }
 
   return (
     <main className={styles.layout}>
-      <AdviceCard
-        adviceItem={{} as AdviceItem}
-        onNextAdvice={handleNextAdvice}
-        isLoading={true}
-      />
+      <AdviceCard adviceItem={advice} onNextAdvice={handleNextAdvice} />
     </main>
   );
 }

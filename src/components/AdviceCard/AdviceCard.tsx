@@ -11,20 +11,15 @@ import { useAppUserHandler } from "../AppUserProvider/appUserContext";
 import { useTranslation } from "react-i18next"; // Import useTranslation
 
 type AdviceCardProps = {
-  adviceItem: AdviceItem;
+  adviceItem: AdviceItem | null;
   onNextAdvice: () => void;
-  isLoading: boolean;
 };
 
 const DESKTOP_WIDTH = 768;
 
-export function AdviceCard({
-  onNextAdvice,
-  adviceItem,
-  isLoading,
-}: AdviceCardProps) {
+export function AdviceCard({ onNextAdvice, adviceItem }: AdviceCardProps) {
   const { user } = useAuth();
-  const { content, id: adviceCount } = adviceItem;
+  const { content, id: adviceCount } = adviceItem ?? {};
   const { t } = useTranslation(); // Use the translation hook
 
   const dividerPath =
@@ -55,7 +50,7 @@ export function AdviceCard({
         <button className={styles.button} type="button" onClick={onNextAdvice}>
           <img src={diceIcon} alt={t("advice_card.get_next_advice")} />{" "}
         </button>
-        {user?.emailVerified && (
+        {user?.emailVerified && adviceItem && (
           <button
             className={clsx(styles.saveAdviceButton, {
               [styles.saveAdviceButtonActive]: existInCollection,

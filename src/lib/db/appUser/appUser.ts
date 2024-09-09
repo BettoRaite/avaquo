@@ -20,7 +20,6 @@ export async function createAppUser(): Promise<AppUser> {
     await setDoc(doc(firestore, "users", uid), appUser);
     return appUser;
   } catch (error) {
-    // [-]: Handle errors appropriately.
     if (error instanceof FirebaseError) {
       console.error("Failed to create app user.\n", error);
     }

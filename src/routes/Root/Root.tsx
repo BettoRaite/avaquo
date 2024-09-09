@@ -28,7 +28,7 @@ export function Root() {
   }
   return (
     <main className={styles.layout}>
-      <div className={styles.languageSwitchLayout}>
+      {/* <div className={styles.languageSwitchLayout}>
         <button
           className={clsx({
             [styles.active]: language === "ru",
@@ -47,7 +47,7 @@ export function Root() {
         >
           eng
         </button>
-      </div>
+      </div> */}
       <Outlet />
       {contentTypeShown === "advice_collection" && (
         <AdviceCollectionOverlay

@@ -1,8 +1,9 @@
+import "dotenv/config";
 import type { VercelRequest, VercelResponse } from "@vercel/node";
 import axios from "axios";
-import "dotenv/config";
-import status from "http-status-codes";
 import { z } from "zod";
+import status from "http-status-codes";
+import { connect } from "../src/hooks/useTextTranslate";
 
 const RAPID_API_KEY = process.env.RAPID_API_KEY;
 
@@ -25,6 +26,7 @@ export default async function (
   request: VercelRequest,
   response: VercelResponse
 ) {
+  console.log(await connect.secret);
   if (request.method !== "GET") {
     return response.status(status.BAD_REQUEST).send({
       errorMessage: "Unsupported method.",
@@ -58,8 +60,8 @@ export default async function (
         headers: HEADERS,
       },
     };
-
     // const res = await axios.post(URL, payload, OPTIONS);
+
     // const translated = res.data[0].translations[0].text;
     // if (translated) {
     //   response.status(status.OK).json({

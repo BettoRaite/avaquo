@@ -39,7 +39,8 @@
 .actionHint {
   font-weight: bold;
   text-align: center;
-  font-size: 1.25rem;
+  font-size: 1.25rem !important;
+  margin-top: 1.5rem !important;
   color: var(--light-cyan);
 }
 .link {

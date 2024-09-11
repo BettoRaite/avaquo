@@ -20,6 +20,7 @@
 .form__title {
   font-size: 1.6rem;
   margin: 0 0 2rem;
+  font-weight: bold;
 }
 
 .form__field {
@@ -51,15 +52,15 @@
   border: none;
 }
 .form__input {
-  flex: 1;
+  width: 100%;
   padding: 0.5rem 0.9rem;
   border-radius: var(--border-radius);
   border: 1px solid white;
   color: var(--dark-grayish-blue);
   font-weight: normal;
-  font-size: 0.95rem;
+  font-size: 0.95rem !important;
+  outline: none !important;
   transition: border-color 0.3s;
-  outline: none;
 }
 
 .form__input--error {
@@ -89,6 +90,20 @@
 }
 .form__submit-button {
   width: 100%;
+  margin-top: 2rem;
+  padding: 0.7rem;
+  border-radius: 5px;
+  border: none;
+  color: var(--dark-grayish-blue);
+  font-size: 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.form__button {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
   margin-top: 2rem;
   padding: 0.7rem;
   border-radius: 5px;

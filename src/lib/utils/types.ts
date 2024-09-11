@@ -1,4 +1,7 @@
 import type { userPreferencesSchema } from "../schemas/schemas";
+import type { authProviders } from "../db/firebase";
+
+export type AuthProviders = keyof typeof authProviders;
 
 export type AdviceItem = {
   id: number;

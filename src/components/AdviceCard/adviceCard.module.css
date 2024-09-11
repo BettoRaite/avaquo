@@ -70,7 +70,7 @@
 }
 
 .button {
-  --button-size: 4rem;
+  --button-size: 3.5rem;
   width: var(--button-size);
   height: var(--button-size);
 
@@ -94,7 +94,6 @@
   width: 42%;
 }
 .saveAdviceButton {
-  --right-offset: 2rem;
   --save-advice-button-size: 3.5rem;
   width: var(--save-advice-button-size);
   height: var(--save-advice-button-size);

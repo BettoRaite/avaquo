@@ -3,10 +3,13 @@
 .layout {
   font-family: "Poppins", sans-serif;
   font-style: normal;
+
   align-self: center;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   --height: 20rem;
   max-width: 35rem;
   width: 80%;
@@ -16,6 +19,7 @@
   z-index: 2;
   background-color: var(--dark-grayish-blue);
   border-radius: var(--border-radius);
+  border: 1px solid white;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
@@ -44,7 +48,7 @@
 }
 .userName {
   color: var(--light-cyan);
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-weight: bold;
   margin: 0;
 }

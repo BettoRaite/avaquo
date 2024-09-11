@@ -1,12 +1,14 @@
 import { FirebaseError } from "firebase/app";
-import { auth } from "../firebase";
+import { auth, authProviders } from "../firebase";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendEmailVerification,
   signOut,
+  signInWithPopup,
 } from "firebase/auth";
 import { authSchema } from "../../schemas/schemas";
+import type { AuthProviders } from "../../utils/types";
 
 export async function handleEmailPasswordSignUp(
   params: ReturnType<typeof authSchema.parse>
@@ -17,6 +19,20 @@ export async function handleEmailPasswordSignUp(
   } catch (error) {
     if (error instanceof FirebaseError) {
       console.error("Failed to sign up user", error);
+      return {
+        message: error.message,
+        code: error.code,
+      };
+    }
+    throw error;
+  }
+}
+export async function handleSignInWithPopup(provider: AuthProviders) {
+  try {
+    await signInWithPopup(auth, authProviders[provider]);
+  } catch (error) {
+    if (error instanceof FirebaseError) {
+      console.error("Failed to sign in user", error);
       return {
         message: error.message,
         code: error.code,

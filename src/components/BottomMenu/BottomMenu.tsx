@@ -1,16 +1,27 @@
-import menuIcon from "/icons/menu-open.svg";
-import profileIcon from "/icons/account_circle_icon.svg";
-import signUpIcon from "/icons/signup.svg";
-import logOutIcon from "/icons/logout.svg";
-import collectionIcon from "/icons/collection.svg";
-import homeIcon from "/icons/home.svg";
-import styles from "./bottonMenu.module.css";
+import { FaRegCircleUser } from "react-icons/fa6";
+import { MdOutlineCollectionsBookmark } from "react-icons/md";
+import { LiaSignInAltSolid } from "react-icons/lia";
+import { GoHome } from "react-icons/go";
+import { MdOutlineMenuOpen } from "react-icons/md";
+import { IoMdLogOut } from "react-icons/io";
+import styles from "./bottomMenu.module.css";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../AuthProvider/authContext";
 import { handleSignOut } from "../../lib/db/firebase";
 import { AppError } from "../../lib/utils/errors";
 import type { ContentType } from "../../routes/Root/Root";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/AlertDialog/AlertDialog";
 
 type BottomMenuProps = {
   onShowContent: (contentType: ContentType) => void;
@@ -53,45 +64,60 @@ export function BottomMenu({ onShowContent }: BottomMenuProps) {
           className={styles.button}
           onClick={handleClick("profile")}
         >
-          <img src={profileIcon} alt="toggle profile overlay" />
+          <FaRegCircleUser />
         </button>
         <button
           type="button"
           className={styles.button}
           onClick={handleClick("advice_collection")}
         >
-          <img src={collectionIcon} alt="toggle advice collection overlay" />
+          <MdOutlineCollectionsBookmark />
         </button>
         <Link to={"/"} className={styles.link} onClick={handleClick("none")}>
-          <img src={homeIcon} alt="go to home page" />
+          <GoHome />
         </Link>
         {user ? (
-          <button
-            type="button"
-            onClick={handleLogout}
-            className={styles.button}
-          >
-            <img src={logOutIcon} alt="log out" />
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger className="bg-transparent">
+              <button className={styles.button} type="button">
+                <IoMdLogOut />
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent className="bg-dark-grayish-blue border-none">
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-white">
+                  Are you sure you want to log out?
+                </AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className="bg-white font-bold text-dark-grayish-blue">
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className="font-bold hover:bg-white hover:text-dark-grayish-blue transition-all duration-300"
+                  onClick={handleLogout}
+                >
+                  Log out
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         ) : (
           <Link
             to={"/signup"}
             className={styles.link}
             onClick={handleClick("none")}
           >
-            <img src={signUpIcon} alt="go to sign up page" />
+            <LiaSignInAltSolid />
           </Link>
         )}
       </div>
       <button
         type="button"
-        className={styles.button}
+        className="text-2xl rounded-full p-4 bg-slate-200 text-gray-500 text-center align-middle active:bg-gray-500 transition duration-200"
         onClick={handleClick()}
-        style={{
-          boxShadow: "none",
-        }}
       >
-        <img src={menuIcon} alt="toggle bottom menu content" />
+        <MdOutlineMenuOpen />
       </button>
     </section>
   );

@@ -12,6 +12,7 @@
   z-index: 1;
 
   background-color: var(--dark-grayish-blue);
+  border: 1px solid white;
 
   border-radius: var(--border-radius);
   transition: transform 0.3s ease, opacity 0.3s ease;
@@ -20,25 +21,25 @@
   color: var(--light-cyan);
 }
 .cardsLayout {
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  gap: 1rem;
-
+  gap: 2rem;
   overflow-y: scroll;
 }
 .layoutVisible {
   transform: translateY(0);
   opacity: 1;
 }
-
 .title {
   margin: 0;
   margin-top: 2rem;
   margin-bottom: 2rem;
 
   color: var(--neon-green);
-  font-size: 1.5rem;
+  font-size: 1rem !important;
+  font-weight: bold;
   text-align: center;
 }

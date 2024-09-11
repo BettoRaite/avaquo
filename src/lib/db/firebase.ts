@@ -4,7 +4,12 @@ import {
   collection,
   connectFirestoreEmulator,
 } from "firebase/firestore";
-import { getAuth, connectAuthEmulator } from "firebase/auth";
+import {
+  getAuth,
+  connectAuthEmulator,
+  GoogleAuthProvider,
+} from "firebase/auth";
+
 export * from "./adviceCollection/adviceCollection";
 export * from "./appUser/appUser";
 export * from "./auth/auth";
@@ -35,6 +40,10 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const firestore = getFirestore(app);
 export const auth = getAuth(app);
+export const authProviders = {
+  google: new GoogleAuthProvider(),
+};
+
 export const usersCollectionRef = collection(firestore, "users");
 const ADVICE_COLLECTION_NAME = "public_advice";
 export const adviceCollectionRef = collection(

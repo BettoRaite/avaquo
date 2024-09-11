@@ -1,0 +1,21 @@
+.button {
+  margin: auto;
+  padding: 0.5rem 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: var(--border-radius);
+  border: none;
+  font-size: 1rem;
+  color: var(--dark-grayish-blue);
+  cursor: pointer;
+  transition: 0.2s all;
+}
+.button:hover {
+  border-radius: var(--border-radius);
+  background-color: var(--dark-grayish-blue);
+  color: white;
+}
+.icon {
+  font-size: 2rem;
+}

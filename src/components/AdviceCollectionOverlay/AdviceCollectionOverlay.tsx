@@ -25,7 +25,7 @@ export function AdviceCollectionOverlay({
       <>
         <div>
           <h1 className={styles.title}>
-            {capitalizeFirstLetter(appUser?.name ?? "")}{" "}
+            {capitalizeFirstLetter(appUser?.name ?? "")}
             {t("adviceCollection.title")}
           </h1>
           <CloseButton onClose={onClose} />

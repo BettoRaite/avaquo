@@ -34,6 +34,9 @@
   width: var(--toggle-menu-button-size);
   height: var(--toggle-menu-button-size);
 
+  position: relative;
+
+  font-size: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,23 +45,16 @@
   border-radius: 50%;
 
   background-color: white;
+  color: var(--grayish-blue);
 
   padding: 1rem;
 
   cursor: pointer;
+  transition: 0.3s all;
 }
-:is(.button, .link) img {
-  width: var(--toggle-menu-button-size);
-  filter: brightness(0) saturate(100%) invert(34%) sepia(15%) saturate(777%)
-    hue-rotate(177deg) brightness(98%) contrast(89%);
-}
-:is(.button .link) {
-  --menu-content-buttons-size: 3.3rem;
-  width: var(--menu-content-buttons-size);
-  height: var(--menu-content-buttons-size);
-}
-.link {
-  --size: 1.5rem;
-  width: var(--size);
-  height: var(--size);
+
+:is(.button, .link):hover {
+  background: var(--grayish-blue);
+  color: white;
+  box-shadow: 10px 10px 10px rgba(0, 0, 0, 0.1);
 }

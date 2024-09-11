@@ -1,10 +1,11 @@
 .layout {
   width: 80%;
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-rows: auto 1fr;
   gap: 1rem;
 }
 .button {
+  justify-self: center;
   align-self: center;
   background-color: transparent;
   border: none;

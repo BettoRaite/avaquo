@@ -1,4 +1,4 @@
-import { capitalizeFirstLetter } from "../../lib/utils/strings";
+import { capitalizeFirstLetter } from "@/lib/utils/strings";
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../components/AuthProvider/authContext";
@@ -8,6 +8,10 @@ import { FIREBASE_ERROR_MESSAGES } from "../../lib/utils/constants";
 import { handleEmailPasswordSignIn } from "../../lib/db/firebase";
 import { createLocalizedAuthValidator } from "../../lib/validation";
 import { useTranslation } from "react-i18next";
+import { Divider } from "@/components/Divider/Divider";
+import { AuthWithProviderButton } from "@/components/AuthWithProviderButton/AuthWithProviderButton";
+import { handleSignInWithPopup } from "@/lib/db/firebase";
+import { ERROR_MESSAGES } from "@/lib/utils/constants";
 
 export function Login() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -15,6 +19,22 @@ export function Login() {
   const { user } = useAuth();
   const { t } = useTranslation();
   const validator = createLocalizedAuthValidator(t);
+
+  async function handleSignInWithGoogle() {
+    try {
+      const errorObject = await handleSignInWithPopup("google");
+
+      if (errorObject) {
+        const message =
+          FIREBASE_ERROR_MESSAGES[errorObject.code] ?? errorObject.message;
+        setErrorMessage(capitalizeFirstLetter(message));
+      } else {
+        navigate("/");
+      }
+    } catch (error) {
+      console.error(ERROR_MESSAGES, error);
+    }
+  }
 
   return (
     <Formik
@@ -93,6 +113,11 @@ export function Login() {
                 {t("create_an_account")} {/* Translated link text */}
               </Link>
             </p>
+            <Divider text="or" />
+            <AuthWithProviderButton
+              provider="google"
+              onClick={handleSignInWithGoogle}
+            />
           </form>
         </div>
       )}

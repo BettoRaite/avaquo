@@ -15,6 +15,7 @@ export function ForgotPassword() {
     <Formik
       initialValues={{ email: "" }}
       validate={createLocalizedEmailValidator(t)}
+      validateOnBlur={false}
       onSubmit={async (values) => {
         try {
           const errorObject = await handleSendingPasswordResetEmail(values);
@@ -34,11 +35,9 @@ export function ForgotPassword() {
       }}
     >
       {(props) => (
-        <div className={styles.layout}>
+        <div className="bg-neon-green p-6 rounded-lg">
           <form onSubmit={props.handleSubmit} className={styles.formLayout}>
-            <h1 className={styles.formTitle}>
-              {t("receive_reset_password_link")}Receive reset password link
-            </h1>
+            <h1 className="form__title">{t("receive_reset_password_link")}</h1>
             <FormField
               form={props}
               fieldName="email"
@@ -46,7 +45,9 @@ export function ForgotPassword() {
               labelContent={t("email_address")}
               placeholder={t("enter_your_email")}
             />
-            <button type="submit">{t("get_link")}</button>
+            <button type="submit" className="form__button m-auto">
+              {t("get_link")}
+            </button>
             {errorMessage && (
               <p className="form__error-message">{errorMessage}</p>
             )}

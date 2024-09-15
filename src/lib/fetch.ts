@@ -7,7 +7,7 @@ export async function fetchAdvice() {
   Random advice endpoint does not work correcly,so I had to get advice by id.
   */
   const hardIdLimit = 200;
-  const attempts = 10;
+  const attempts = 30;
   const requestPromises = [];
 
   for (let i = 0; i < attempts; ++i) {

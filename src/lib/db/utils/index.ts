@@ -27,7 +27,7 @@ export function checkAuthStatus() {
 
 export async function getAdviceIdWithSameContent(
   item: AdviceItem
-): Promise<null | number> {
+): Promise<null | string> {
   const adviceQuery = query(
     adviceCollectionRef,
     where("content", "==", item.content)
@@ -36,8 +36,7 @@ export async function getAdviceIdWithSameContent(
 
   if (!snapshot.empty) {
     const doc = snapshot.docs[0];
-    const { id } = doc.data();
-    return id;
+    return doc.id;
   }
   return null;
 }

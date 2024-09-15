@@ -11,32 +11,38 @@ type AppUserProviderProps = {
 export function AppUserProvider({ children }: AppUserProviderProps) {
   const { user, isEmailVerified } = useAuth();
   const [appUser, setAppUser] = useState<null | AppUser>(null);
-  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
-    async function getAppUser() {
+    async function retrieveAppUser() {
       let nextAppUser = null;
       if (user && isEmailVerified) {
         try {
           nextAppUser = await db.getAppUser();
+          // Initializing app user in firestore.
           if (!nextAppUser) {
-            nextAppUser = await db.createAppUser();
+            nextAppUser = await db.initAppUser();
+            // An error has occured.
+            if (!nextAppUser) {
+              return;
+            }
           }
         } catch (error) {
-          console.error("Failed to retrieve app user data", error);
-          setErrorMessage("Ops...an unexpected error has occured.");
+          console.error(
+            "Unexpected error during app user data retrieval\n",
+            error
+          );
+          return;
         }
       }
 
       setAppUser(nextAppUser);
     }
-    getAppUser();
+    retrieveAppUser();
   }, [user, isEmailVerified]);
 
   const value = {
     appUser,
     setAppUser,
-    errorMessage,
   };
 
   return (

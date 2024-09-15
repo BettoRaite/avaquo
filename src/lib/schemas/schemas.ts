@@ -16,13 +16,12 @@ export const apiResponseSchema = z.object({
 });
 
 export const adviceSchema = z.object({
-  id: z.number(),
   content: z.string(),
 });
 
 export const appUserSchema = z.object({
   name: z.string(),
-  adviceIds: z.array(z.number()),
+  adviceIds: z.array(z.string()),
 });
 
 const passwordSchema = z.string().superRefine((password, ctx) => {

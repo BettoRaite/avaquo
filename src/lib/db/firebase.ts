@@ -45,15 +45,12 @@ export const authProviders = {
 };
 
 export const usersCollectionRef = collection(firestore, "users");
-const ADVICE_COLLECTION_NAME = "public_advice";
-export const adviceCollectionRef = collection(
-  firestore,
-  ADVICE_COLLECTION_NAME
-);
+export const adviceCollectionRef = collection(firestore, "public_advice");
 export const privateAdviceCollectionRef = collection(
   firestore,
   "private_advice"
 );
+export const userNamesCollectionRef = collection(firestore, "user_names");
 
 if (VITE_ENV !== "PROD") {
   connectAuthEmulator(auth, "http://localhost:9099");

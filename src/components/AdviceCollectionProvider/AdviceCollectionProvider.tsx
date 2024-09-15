@@ -7,6 +7,8 @@ import { useAppUserContext } from "../AppUserProvider/appUserContext";
 import { useAuth } from "../AuthProvider/authContext";
 import { getAdviceCollection } from "../../lib/db/firebase";
 import type { AdviceItem } from "../../lib/utils/types";
+import { errorLogger } from "@/lib/utils/errorLogger";
+import { AppError } from "@/lib/utils/errors";
 
 type AdviceCollectionProviderProps = {
   children: React.ReactNode;
@@ -21,28 +23,43 @@ export function AdviceCollectionProvider({
   const { isEmailVerified } = useAuth();
 
   useEffect(() => {
-    // [-]: No error handling.
-    let ignoreQuery = false;
+    let isWaitingForResponse = true;
     async function getCollection() {
       if (appUser && isEmailVerified) {
-        setLoadStatus("loading");
-        const collection = await getAdviceCollection(appUser);
-        if (collection) {
-          if (!ignoreQuery) {
-            setAdviceCollection(collection);
-            setLoadStatus("idle");
+        try {
+          setLoadStatus("loading");
+          const collection = await getAdviceCollection(appUser);
+          if (collection) {
+            if (isWaitingForResponse) {
+              setAdviceCollection(collection);
+              setLoadStatus("idle");
+            }
+          } else {
+            if (isWaitingForResponse) {
+              setLoadStatus("error");
+            }
           }
-        } else {
-          if (!ignoreQuery) {
-            setLoadStatus("error");
+        } catch (error) {
+          const scopeData: Record<string, unknown> = {
+            appUser,
+            isEmailVerified,
+          };
+          if (error instanceof AppError) {
+            scopeData.errorScopeData = error.scopeData;
           }
+          errorLogger(
+            "Unexpected error during advice collection retrival",
+            error as Error,
+            scopeData
+          );
         }
       }
     }
+
     getCollection();
 
     return () => {
-      ignoreQuery = true;
+      isWaitingForResponse = false;
       setLoadStatus("idle");
     };
   }, [appUser, isEmailVerified]);

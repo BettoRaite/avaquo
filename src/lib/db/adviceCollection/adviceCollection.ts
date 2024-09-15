@@ -1,54 +1,49 @@
 import { FirebaseError } from "firebase/app";
 import { ZodError } from "zod";
-import { addDoc, getDocs, where, query } from "firebase/firestore";
+import {
+  addDoc,
+  getDocs,
+  where,
+  query,
+  documentId,
+  QueryDocumentSnapshot,
+} from "firebase/firestore";
 import type { AdviceItem, AppUser } from "../../utils/types";
 import { adviceCollectionRef } from "../firebase";
 import { adviceSchema, appUserSchema } from "../../schemas/schemas";
-import { checkAuthStatus } from "../utils";
 import { getAdviceIdWithSameContent } from "../utils";
+import { errorLogger } from "@/lib/utils/errorLogger";
+import { AppError } from "@/lib/utils/errors";
+import { splitInto2DArray } from "@/lib/utils/array";
 
 /**
- * Adds advice to advice collection, if no advice
- * with same text content exists, then returns its id,
- * otherwise the id of an existant advice.
+ * Adds advice item to advice collection, if no advice
+ * with same text content exists in firestore, after that it returns
+ * the id of newly created document. In case, there is already
+ * advice in advice collection with same content, it returns the doc id.
  * @param item Advice item.
- * @returns Advice item id, or null if an error has occured, or
+ * @returns If no error occurs id of a newly created doc, or id of an existant doc. In case of
+ * error null is returned.
  */
 export async function addToAdviceCollection(
   item: AdviceItem
-): Promise<null | number> {
+): Promise<null | string> {
   try {
     adviceSchema.parse(item);
     const id = await getAdviceIdWithSameContent(item);
     if (id) {
       return id;
     }
-    await addDoc(adviceCollectionRef, item);
-    return item.id;
+    const doc = await addDoc(adviceCollectionRef, item);
+    return doc.id;
   } catch (error) {
     console.error("Failed to add advice to advice collection\n", error);
     return null;
   }
 }
 
-export async function removeFromAdviceCollection(item: AdviceItem) {
-  try {
-    adviceSchema.parse(item);
-    checkAuthStatus();
-
-    const id = await getAdviceIdWithSameContent(item);
-    if (!id) {
-      return;
-    }
-  } catch (error) {
-    console.error("Failed to remove from advice collection", error);
-    // [-]: Add appropriate error-handling.
-    throw error;
-  }
-}
-
 /**
- * Retrieves an advice collection from Firestore, based on
+ * Retrieves docs from advice collection, ids of which match
  * the `appUser` advice ids.
  * @param appUser The app user.
  * @returns The advice collection or null if an error occurs.
@@ -61,30 +56,48 @@ export async function getAdviceCollection(
     if (appUser.adviceIds.length === 0) {
       return [];
     }
-    const adviceQuery = query(
-      adviceCollectionRef,
-      where("id", "in", appUser.adviceIds)
-    );
-    const snapshot = await getDocs(adviceQuery);
+    const adviceIds2D = splitInto2DArray(appUser.adviceIds, 30);
+    const docs2D: QueryDocumentSnapshot[][] = [];
+    for (const adviceIds of adviceIds2D) {
+      const adviceQuery = query(
+        adviceCollectionRef,
+        where(documentId(), "in", adviceIds)
+      );
+      const snapshot = await getDocs(adviceQuery);
+      docs2D.push(snapshot.docs);
+    }
+
     const adviceCollection: AdviceItem[] = [];
-    for (const doc of snapshot.docs) {
-      adviceCollection.push(doc.data() as AdviceItem);
+
+    for (const docs of docs2D) {
+      for (const doc of docs) {
+        adviceCollection.push(doc.data() as AdviceItem);
+      }
+    }
+
+    if (adviceCollection.length === 0) {
+      throw new AppError(
+        "Advice collection is empty, even though user has references to advice documents",
+        false,
+        {
+          docs2D: docs2D,
+        }
+      );
     }
     return adviceCollection;
   } catch (error) {
     if (error instanceof ZodError) {
-      console.error("Invalid app user data:", error.errors);
+      errorLogger("Invalid app user data", error, {
+        appUser,
+      });
       return null;
     }
-
     if (error instanceof FirebaseError) {
-      console.error("Firestore error:", error.message, error.code);
+      errorLogger("Failed to retrieve advice collection", error, {
+        appUser,
+      });
       return null;
     }
-    console.error(
-      "Unexpected error while retrieving advice collection:",
-      error
-    );
-    return null;
+    throw error;
   }
 }

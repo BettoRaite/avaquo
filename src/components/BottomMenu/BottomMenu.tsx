@@ -79,9 +79,9 @@ export function BottomMenu({ onShowContent }: BottomMenuProps) {
         {user ? (
           <AlertDialog>
             <AlertDialogTrigger className="bg-transparent">
-              <button className={styles.button} type="button">
+              <div className={styles.button}>
                 <IoMdLogOut />
-              </button>
+              </div>
             </AlertDialogTrigger>
             <AlertDialogContent className="bg-dark-grayish-blue border-none">
               <AlertDialogHeader>

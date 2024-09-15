@@ -13,11 +13,11 @@ import {
   ERROR_MESSAGES,
   FIREBASE_ERROR_MESSAGES,
 } from "../../lib/utils/constants";
+import { FirebaseError } from "firebase/app";
 
 type AppUserContextModel = {
   appUser: AppUser | null;
   setAppUser: Dispatch<SetStateAction<AppUser | null>>;
-  errorMessage: string;
 };
 
 export const AppUserContext = createContext<AppUserContextModel>(
@@ -30,6 +30,7 @@ export const useAppUserHandler = () => {
   const { appUser, setAppUser } = useContext(AppUserContext);
   const { isEmailVerified } = useAuth();
   const { setToastNotification } = useToastNotificationContext();
+
   const checkIfUserVerified = () => {
     if (isEmailVerified && appUser) {
       return {
@@ -38,13 +39,19 @@ export const useAppUserHandler = () => {
     }
     throw new AppError("User not authorized to perform this action", false);
   };
-  /*
-// FIXME: Replace user adviceIds with string ids of advice docs. 
-Currently the way how relations between advice and user are handled is 
-with the actual id of advice, but what if we have advice docs
-with same id, but different translations? 
-
-*/
+  const handleError = (error: Error) => {
+    if (error instanceof AppError && error.isOperational) {
+      setToastNotification(error.message);
+    }
+    if (error instanceof FirebaseError) {
+      setToastNotification(
+        FIREBASE_ERROR_MESSAGES[error.code] ??
+          ERROR_MESSAGES.common.unexpectedError
+      );
+    }
+    console.error("Failed to change user name\n", error);
+    // setToastNotification(ERROR_MESSAGES.common.unexpectedError);
+  };
   return {
     async changeName(name: string) {
       try {
@@ -53,20 +60,10 @@ with same id, but different translations?
           ...appUser,
           name,
         };
-
-        const errorObject = await db.setAppUser(nextAppUser);
-        if (errorObject) {
-          setToastNotification(
-            FIREBASE_ERROR_MESSAGES[errorObject.code] ??
-              ERROR_MESSAGES.common.unexpectedError
-          );
-          return;
-        }
-
+        await db.setAppUser(nextAppUser, "change_name");
         setAppUser(nextAppUser);
       } catch (error) {
-        console.error("Failed to change user name", error);
-        setToastNotification(ERROR_MESSAGES.common.unexpectedError);
+        handleError(error as Error);
       }
     },
     async saveAdvice(item: AdviceItem) {
@@ -81,33 +78,26 @@ with same id, but different translations?
           setToastNotification(ERROR_MESSAGES.common.unexpectedError);
           return;
         }
+        // Checking for an impossible error.
         if (nextAppUser.adviceIds.includes(id)) {
           throw new AppError("Duplicate advice id", false);
         }
         nextAppUser.adviceIds.push(id);
 
-        const errorObject = await db.setAppUser(nextAppUser);
-        if (errorObject) {
-          setToastNotification(
-            FIREBASE_ERROR_MESSAGES[errorObject.code] ??
-              ERROR_MESSAGES.common.unexpectedError
-          );
-          return;
-        }
-
+        await db.setAppUser(nextAppUser, "add_advice");
         setAppUser(nextAppUser);
       } catch (error) {
-        console.error(ERROR_MESSAGES.common.unexpectedError, error);
-        setToastNotification(ERROR_MESSAGES.common.unexpectedError);
+        handleError(error as Error);
       }
     },
     async removeAdvice(item: AdviceItem) {
       try {
         const { appUser } = checkIfUserVerified();
-        const id = await db.getAdviceIdWithSameContent(item);
-        if (!id) {
+        const docId = await db.getAdviceIdWithSameContent(item);
+        // This is an impossible state, since user must have ref to the previously created document.
+        if (!docId) {
           throw new AppError(
-            `The advice does not exist in firestore.\nAdvice:${JSON.stringify(
+            `Advice item does not exist in firestore.\nAdvice:${JSON.stringify(
               item,
               null,
               4
@@ -115,7 +105,8 @@ with same id, but different translations?
             false
           );
         }
-        if (!appUser.adviceIds.includes(id)) {
+
+        if (!appUser.adviceIds.includes(docId)) {
           throw new AppError(
             `App user does not have the advice id.\nAdvice:${JSON.stringify(
               item,
@@ -125,24 +116,17 @@ with same id, but different translations?
             false
           );
         }
+
         const nextAppUser = {
           ...appUser,
-          adviceIds: appUser.adviceIds.filter((id) => id !== item.id),
+          adviceIds: appUser.adviceIds.filter((id) => id !== docId),
         };
 
-        const errorObject = await db.setAppUser(nextAppUser);
-        if (errorObject) {
-          setToastNotification(
-            FIREBASE_ERROR_MESSAGES[errorObject.code] ??
-              ERROR_MESSAGES.common.unexpectedError
-          );
-          return;
-        }
+        await db.setAppUser(nextAppUser, "remove_advice");
 
         setAppUser(nextAppUser);
       } catch (error) {
-        console.error(ERROR_MESSAGES.common.unexpectedError, error);
-        setToastNotification(ERROR_MESSAGES.common.unexpectedError);
+        handleError(error as Error);
       }
     },
   };

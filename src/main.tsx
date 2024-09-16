@@ -15,6 +15,7 @@ import { ForgotPassword } from "./routes/ForgotPassword/ForgotPassword";
 import { ResetPassword } from "./routes/ResetPassword/ResetPassword";
 import "./i18n.ts";
 import { LocaleProvider } from "./components/LocaleProvider/LocaleProvider";
+import { IconContext } from "react-icons/lib";
 
 const router = createBrowserRouter([
   {
@@ -47,16 +48,22 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
-    <LocaleProvider>
-      <ToastNotificationProvider>
-        <AuthProvider>
-          <AppUserProvider>
-            <AdviceCollectionProvider>
-              <RouterProvider router={router} />
-            </AdviceCollectionProvider>
-          </AppUserProvider>
-        </AuthProvider>
-      </ToastNotificationProvider>
-    </LocaleProvider>
+    <IconContext.Provider
+      value={{
+        className: "react-icons",
+      }}
+    >
+      <LocaleProvider>
+        <ToastNotificationProvider>
+          <AuthProvider>
+            <AppUserProvider>
+              <AdviceCollectionProvider>
+                <RouterProvider router={router} />
+              </AdviceCollectionProvider>
+            </AppUserProvider>
+          </AuthProvider>
+        </ToastNotificationProvider>
+      </LocaleProvider>
+    </IconContext.Provider>
   </StrictMode>
 );

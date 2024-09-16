@@ -131,6 +131,12 @@ body {
     --chart-5: 340 75% 55%;
   }
 }
+.react-icons {
+  font-size: 1.5rem !important;
+}
+.icon--3xl {
+  font-size: 3rem !important;
+}
 @layer base {
   * {
     @apply border-border;

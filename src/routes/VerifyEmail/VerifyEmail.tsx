@@ -1,7 +1,7 @@
 import styles from "./verifyEmail.module.css";
+import { MdMail } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../components/AuthProvider/authContext";
-import mailIcon from "/public/icons/mail-filled.svg";
 import { useState, useEffect, useCallback } from "react";
 import { sendVerification } from "../../lib/db/firebase";
 import { FIREBASE_ERROR_MESSAGES } from "../../lib/utils/constants";
@@ -109,7 +109,7 @@ export function VerifyEmail() {
   return (
     <main className={styles.layout}>
       <div className={styles.banner}>
-        <img src={mailIcon} alt={t("verify_account.mail_alt")} />
+        <MdMail />
       </div>
       <h3 className={styles.title}>
         {verificationStatus === "verified"

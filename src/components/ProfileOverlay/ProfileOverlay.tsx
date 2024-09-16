@@ -1,11 +1,11 @@
 import styles from "./profileOverlay.module.css";
 import { useAppUserContext } from "../AppUserProvider/appUserContext";
-import userIcon from "/public/icons/account_circle_icon.svg";
 import { useState } from "react";
 import { MdModeEdit, MdCancel, MdSave } from "react-icons/md";
 import { useAppUserHandler } from "../AppUserProvider/appUserContext";
 import { LockedContent } from "../LockedContent/LockedContent";
 import { CloseButton } from "../CloseButton/CloseButton";
+import { FaRegCircleUser } from "react-icons/fa6";
 
 type ProfileOverlayProps = {
   onClose: () => void;
@@ -103,7 +103,7 @@ export function ProfileOverlay({ onClose }: ProfileOverlayProps) {
     content = (
       <div className={styles.contentLayout}>
         <div className={styles.userIconWrapper}>
-          <img src={userIcon} alt="User profile icon" />
+          <FaRegCircleUser className="icon--3xl mb-4 text-light-cyan" />
           <div className={styles.userNameLayout}>
             {isEditing ? (
               <EditableInput value={name} onChange={handleChange} />

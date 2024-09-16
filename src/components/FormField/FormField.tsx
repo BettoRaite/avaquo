@@ -1,8 +1,7 @@
 import clsx from "clsx";
 import { useState, type InputHTMLAttributes } from "react";
 import type { FieldProps } from "formik";
-import notVisibleIcon from "/public/icons/not-visible.svg";
-import visibleIcon from "/public/icons/visible.svg";
+import { MdVisibility, MdVisibilityOff } from "react-icons/md";
 import { useTranslation } from "react-i18next";
 
 interface FormFieldProps extends Pick<FieldProps, "form"> {
@@ -69,10 +68,11 @@ export function FormField({
             onClick={handleShowPasswordToggle}
             aria-label={showPassword ? t("hide_password") : t("show_password")}
           >
-            <img
-              src={showPassword ? notVisibleIcon : visibleIcon}
-              alt={showPassword ? t("hide_password") : t("show_password")}
-            />
+            {showPassword ? (
+              <MdVisibility title={t("show_password")} />
+            ) : (
+              <MdVisibilityOff title={t("hide_password")} />
+            )}
           </button>
         )}
       </div>

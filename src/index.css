@@ -77,6 +77,12 @@ body {
     background-color: #f9f9f9;
   }
 }
+.icon--4rem {
+  font-size: 4rem !important;
+}
+.icon--3rem {
+  font-size: 3rem !important;
+}
 .icon--2rem {
   font-size: 2rem !important;
 }

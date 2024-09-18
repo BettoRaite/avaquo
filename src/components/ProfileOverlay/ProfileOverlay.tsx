@@ -104,7 +104,7 @@ export function ProfileOverlay({ onClose }: ProfileOverlayProps) {
     content = (
       <div className={styles.contentLayout}>
         <div className={styles.userIconWrapper}>
-          <FaRegCircleUser />
+          <FaRegCircleUser className="icon--3rem text-light-cyan mb-4" />
           <div className={styles.userNameLayout}>
             {isEditing ? (
               <EditableInput value={name} onChange={handleChange} />

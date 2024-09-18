@@ -35,6 +35,7 @@ export function AppUserProvider({ children }: AppUserProviderProps) {
         return;
       } finally {
         setIsLoading(false);
+        setAppUser(appUser);
       }
       setAppUser(appUser);
     }

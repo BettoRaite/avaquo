@@ -45,7 +45,7 @@
 
   text-align: center;
 
-  font-size: 1.53rem !important;
+  font-size: 1.28rem !important;
   font-weight: 900;
   color: var(--light-cyan);
 }
@@ -147,11 +147,12 @@
     width: 30rem;
   }
   .adviceText {
-    font-size: 1.4rem !important;
+    font-size: 1.35rem !important;
     margin-bottom: 2rem;
   }
   .patternDivider {
     margin-bottom: 0.5rem;
+    height: 0.8rem;
   }
   .button {
     --button-size: 3.5rem;

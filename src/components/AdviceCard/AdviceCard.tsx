@@ -41,11 +41,7 @@ export function AdviceCard({ onNextAdvice, adviceItem }: AdviceCardProps) {
       </h5>
 
       {content && <q className={styles.adviceText}>{content}</q>}
-      <img
-        src={dividerPath}
-        alt={t("advice_card.divider_alt")}
-        className={styles.patternDivider}
-      />
+      <img src={dividerPath} alt={""} className={styles.patternDivider} />
       <div className={styles.buttonsLayout}>
         <button className={styles.button} type="button" onClick={onNextAdvice}>
           <img src={diceIcon} alt={t("advice_card.get_next_advice")} />{" "}

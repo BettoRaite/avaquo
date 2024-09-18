@@ -4,7 +4,7 @@ import {
   getDoc,
   type DocumentReference,
 } from "firebase/firestore";
-import type { AppUser } from "../../utils/types";
+import type { AppUser } from "../../utils/definitions";
 
 vi.mock("firebase/auth");
 vi.mock("firebase/firestore");

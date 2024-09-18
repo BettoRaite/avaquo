@@ -8,12 +8,12 @@ import {
   documentId,
   QueryDocumentSnapshot,
 } from "firebase/firestore";
-import type { AdviceItem, AppUser } from "../../utils/types";
+import type { AdviceItem, AppUser } from "../../utils/definitions";
 import { adviceCollectionRef } from "../firebase";
 import { adviceSchema, appUserSchema } from "../../schemas/schemas";
 import { getAdviceIdWithSameContent } from "../utils";
 import { errorLogger } from "@/lib/utils/errorLogger";
-import { AppError } from "@/lib/utils/errors";
+import { AppError } from "@/lib/utils/error";
 import { splitInto2DArray } from "@/lib/utils/array";
 
 /**
@@ -25,20 +25,20 @@ import { splitInto2DArray } from "@/lib/utils/array";
  * @returns If no error occurs id of a newly created doc, or id of an existant doc. In case of
  * error null is returned.
  */
-export async function addToAdviceCollection(
-  item: AdviceItem
-): Promise<null | string> {
+export async function addToAdviceCollection(item: AdviceItem) {
   try {
     adviceSchema.parse(item);
     const id = await getAdviceIdWithSameContent(item);
-    if (id) {
-      return id;
-    }
+    if (id) return id;
     const doc = await addDoc(adviceCollectionRef, item);
     return doc.id;
   } catch (error) {
-    console.error("Failed to add advice to advice collection\n", error);
-    return null;
+    if (error instanceof FirebaseError) {
+      error.customData = {
+        item,
+      };
+    }
+    throw error;
   }
 }
 

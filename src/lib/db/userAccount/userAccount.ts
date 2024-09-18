@@ -2,7 +2,7 @@ import { sendPasswordResetEmail } from "firebase/auth";
 import { forgotPasswordSchema } from "../../schemas/schemas";
 import { auth } from "../firebase";
 import { FirebaseError } from "firebase/app";
-import { FirebaseErrorObject } from "../../utils/types";
+import { FirebaseErrorObject } from "../../utils/definitions";
 
 export async function handleSendingPasswordResetEmail(
   params: ReturnType<typeof forgotPasswordSchema.parse>

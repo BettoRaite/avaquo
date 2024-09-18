@@ -1,4 +1,4 @@
-import type { AuthProviders } from "../../lib/utils/types";
+import type { AuthProviders } from "../../lib/utils/definitions";
 import { capitalizeFirstLetter } from "../../lib/utils/strings";
 import { AiFillGoogleCircle } from "react-icons/ai";
 import styles from "./authWithProviderButton.module.css";

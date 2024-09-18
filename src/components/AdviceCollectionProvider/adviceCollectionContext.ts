@@ -1,5 +1,5 @@
 import { useContext, createContext } from "react";
-import type { AdviceItem } from "../../lib/utils/types";
+import type { AdviceItem } from "../../lib/utils/definitions";
 
 export function useAdviceCollectionContext() {
   return useContext(AdviceCollectionContext);

@@ -1,4 +1,4 @@
-import type { AdviceItem } from "../../lib/utils/types";
+import type { AdviceItem } from "../../lib/utils/definitions";
 import styles from "./adviceCollectionCard.module.css";
 import { MdRemoveCircleOutline } from "react-icons/md";
 

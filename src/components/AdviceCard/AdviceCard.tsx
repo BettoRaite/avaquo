@@ -6,7 +6,7 @@ import dividerMobileView from "/pattern-divider-mobile.svg";
 import { useAuth } from "../AuthProvider/authContext";
 import { useAdviceCollectionContext } from "../AdviceCollectionProvider/adviceCollectionContext";
 import { AiOutlineLike, AiFillLike } from "react-icons/ai";
-import type { AdviceItem } from "../../lib/utils/types";
+import type { AdviceItem } from "../../lib/utils/definitions";
 import { useAppUserHandler } from "../AppUserProvider/appUserContext";
 import { useTranslation } from "react-i18next"; // Import useTranslation
 

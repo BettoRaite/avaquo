@@ -1,5 +1,5 @@
 import { ERROR_MESSAGES } from "./utils/constants";
-import type { UserPreferences } from "./utils/types";
+import type { UserPreferences } from "./utils/definitions";
 
 const PREFERENCES_KEY = "APP_USER_PREFERENCES";
 

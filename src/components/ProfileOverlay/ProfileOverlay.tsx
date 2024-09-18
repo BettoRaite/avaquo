@@ -1,11 +1,12 @@
 import styles from "./profileOverlay.module.css";
 import { useAppUserContext } from "../AppUserProvider/appUserContext";
-import userIcon from "/public/icons/account_circle_icon.svg";
+import { FaRegCircleUser } from "react-icons/fa6";
 import { useState } from "react";
 import { MdModeEdit, MdCancel, MdSave } from "react-icons/md";
 import { useAppUserHandler } from "../AppUserProvider/appUserContext";
 import { LockedContent } from "../LockedContent/LockedContent";
 import { CloseButton } from "../CloseButton/CloseButton";
+import { CircleLoader } from "../CircleLoader";
 
 type ProfileOverlayProps = {
   onClose: () => void;
@@ -79,7 +80,7 @@ function ActionButtons({
 }
 
 export function ProfileOverlay({ onClose }: ProfileOverlayProps) {
-  const { appUser } = useAppUserContext();
+  const { appUser, isLoading } = useAppUserContext();
   const [name, setName] = useState(appUser?.name ?? "");
   const [isEditing, setIsEditing] = useState(false);
   const { changeName } = useAppUserHandler();
@@ -103,7 +104,7 @@ export function ProfileOverlay({ onClose }: ProfileOverlayProps) {
     content = (
       <div className={styles.contentLayout}>
         <div className={styles.userIconWrapper}>
-          <img src={userIcon} alt="User profile icon" />
+          <FaRegCircleUser />
           <div className={styles.userNameLayout}>
             {isEditing ? (
               <EditableInput value={name} onChange={handleChange} />
@@ -117,6 +118,14 @@ export function ProfileOverlay({ onClose }: ProfileOverlayProps) {
             handleSave={handleSave}
           />
         </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    content = (
+      <div className="flex justify-center items-center">
+        <CircleLoader />
       </div>
     );
   }

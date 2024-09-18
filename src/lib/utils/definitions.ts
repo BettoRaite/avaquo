@@ -1,6 +1,18 @@
 import type { userPreferencesSchema } from "../schemas/schemas";
 import type { authProviders } from "../db/firebase";
 
+export type ToastNotificationType =
+  | "error"
+  | "warn"
+  | "message"
+  | "success"
+  | "info"
+  | "loading";
+
+export type ToastNotification = {
+  message: string;
+  type: ToastNotificationType;
+};
 export type AuthProviders = keyof typeof authProviders;
 
 export type AdviceItem = {

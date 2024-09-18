@@ -7,12 +7,14 @@ import styles from "./root.module.css";
 import { useLocaleContext } from "../../components/LocaleProvider/localeContext";
 import type { SupportedLocales } from "../../lib/schemas/schemas";
 import clsx from "clsx";
+import { useToastNotificationContext } from "@/components/ToastNotificationProvider/toastNotificationContext";
+import { ToastNotification } from "@/components/ToastNotification/ToastNotification";
 
 export type ContentType = "profile" | "advice_collection" | "none";
 
 export function Root() {
   const [contentTypeShown, setContentTypeShown] = useState<ContentType>("none");
-
+  const { toastNotification } = useToastNotificationContext();
   function handleShowContent(contentType: ContentType) {
     if (contentTypeShown === contentType) {
       return setContentTypeShown("none");
@@ -58,6 +60,7 @@ export function Root() {
         <ProfileOverlay onClose={() => handleShowContent("profile")} />
       )}
       <BottomMenu onShowContent={handleShowContent} />
+      <ToastNotification />
     </main>
   );
 }

@@ -1,6 +1,6 @@
 import { auth } from "../firebase";
-import { AppError } from "../../utils/errors";
-import type { AdviceItem } from "../../utils/types";
+import { AppError } from "../../utils/error";
+import type { AdviceItem } from "../../utils/definitions";
 import { where, query, getDocs } from "firebase/firestore";
 import { adviceCollectionRef } from "../firebase";
 

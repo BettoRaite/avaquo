@@ -1,8 +1,8 @@
-import type { AppUser } from "../../utils/types";
+import type { AppUser } from "../../utils/definitions";
 import { appUserSchema } from "../../schemas/schemas";
 import { FirebaseError } from "firebase/app";
 import { getDocs, setDoc, doc, where, query, getDoc } from "firebase/firestore";
-import { AppError } from "../../utils/errors";
+import { AppError } from "../../utils/error";
 import { getUserId } from "../utils";
 import { errorLogger } from "@/lib/utils/errorLogger";
 import { userNamesCollectionRef, usersCollectionRef } from "../firebase";
@@ -12,62 +12,41 @@ function generateNameWithNumberPostfix(): string {
   return `name${id}`;
 }
 
-async function isNameTaken(name: string): Promise<boolean | null> {
-  try {
-    const nameQuery = query(userNamesCollectionRef, where("name", "==", name));
-    const snapshot = await getDocs(nameQuery);
-    return !snapshot.empty;
-  } catch (error) {
-    if (error instanceof FirebaseError) {
-      errorLogger("Failed to check if name is taken", error, {
-        name,
-      });
-      return null;
-    }
-    throw error;
-  }
+async function isNameTaken(name: string): Promise<boolean> {
+  const nameQuery = query(userNamesCollectionRef, where("name", "==", name));
+  const snapshot = await getDocs(nameQuery);
+  return !snapshot.empty;
 }
 
-async function getUniqueUserName(): Promise<string | null> {
-  const attemps = 10;
-  try {
-    let name = generateNameWithNumberPostfix();
-    for (let i = 0; i < attemps; ++i) {
-      const isTaken = await isNameTaken(name);
-      if (isTaken === null) {
-        return null;
-      }
-      if (isTaken) {
-        name = generateNameWithNumberPostfix();
-        continue;
-      }
-      return name;
+async function getUniqueUserName(): Promise<string> {
+  const attempts = 50;
+  let name = generateNameWithNumberPostfix();
+  for (let i = 0; i < attempts; ++i) {
+    const isTaken = await isNameTaken(name);
+    if (isTaken) {
+      name = generateNameWithNumberPostfix();
+      continue;
     }
-    throw new AppError(
-      "Failed to generate a random user name, exhausted number of attempts",
-      false
-    );
-  } catch (error) {
-    if (error instanceof FirebaseError) {
-      console.error("Failed to generate user name\n", error);
-      return null;
-    }
-    throw error;
+    return name;
   }
+  throw new AppError(
+    "Failed to generate a random user name, exhausted number of attempts",
+    false
+  );
 }
 /**
  * Adds/updates user name in user names collection.
  * @param name App user name.
- * @returns Null if an error has occured.
  */
-async function setUserName(name: string) {
+async function updateUserName(name: string) {
   try {
     const uid = getUserId();
     await setDoc(doc(userNamesCollectionRef, uid), { name });
   } catch (error) {
     if (error instanceof FirebaseError) {
-      errorLogger("Failed to set user name", error, { name });
-      return null;
+      error.customData = {
+        name,
+      };
     }
     throw error;
   }
@@ -77,35 +56,19 @@ async function setUserName(name: string) {
  * @returns AppUser or null if an error has occured.
  */
 export async function initAppUser(): Promise<AppUser | null> {
-  try {
-    const uid = getUserId();
+  const uid = getUserId();
 
-    const name = await getUniqueUserName();
-    if (!name) {
-      return null;
-    }
-    const appUser: AppUser = {
-      name,
-      adviceIds: [],
-    };
-    // [-]: Need better way of doing error handling.
-    const result = await setUserName(name);
-    if (result === null) {
-      return null;
-    }
-    await setDoc(doc(usersCollectionRef, uid), appUser);
-    return appUser;
-  } catch (error) {
-    if (error instanceof FirebaseError) {
-      console.error("Failed to init app user\n", error);
-      return null;
-    }
-    throw error;
-  }
+  const name = await getUniqueUserName();
+  const appUser: AppUser = {
+    name,
+    adviceIds: [],
+  };
+  await updateUserName(name);
+  await setDoc(doc(usersCollectionRef, uid), appUser);
+  return appUser;
 }
 /**
  * Retrieves app user data from firestore.
- * @throws `NonExistentUserError` if user has no been authenticated.
  * @returns `null` if app user data has not yet been initialized or unexpected
  * FirebaseError has occured.
  */
@@ -116,37 +79,46 @@ export async function getAppUser(): Promise<AppUser | null> {
     return snapshot.exists() ? (snapshot.data() as AppUser) : null;
   } catch (error) {
     if (error instanceof FirebaseError) {
-      console.error("Failed to read app user data\n", error);
+      console.error("Failed to get app user\n", error);
       return null;
     }
     throw error;
   }
 }
 type ActionType = "remove_advice" | "add_advice" | "change_name";
-export async function setAppUser(appUser: AppUser, action: ActionType) {
+export async function updateAppUser(nextAppUser: AppUser, action: ActionType) {
   try {
     const uid = getUserId();
-    appUserSchema.parse(appUser);
+    appUserSchema.parse(nextAppUser);
 
     if (action === "change_name") {
       const prevAppUser = await getAppUser();
       if (!prevAppUser) {
-        throw new AppError("No app user", false);
+        throw new AppError(
+          "App user does not exist, while trying to change name",
+          false,
+          {
+            nextAppUser,
+          }
+        );
       }
-      const { name } = appUser;
+      const { name } = nextAppUser;
       if (await isNameTaken(name)) {
-        throw new AppError("Name is taken", true);
+        throw new AppError("name_is_taken", true);
       }
-      await setUserName(name);
+      await updateUserName(name);
     }
 
-    await setDoc(doc(usersCollectionRef, uid), appUser);
+    await setDoc(doc(usersCollectionRef, uid), nextAppUser);
   } catch (error) {
     if (error instanceof FirebaseError) {
       errorLogger("Failed to set app user\n", error, {
-        appUser,
+        nextAppUser,
         action,
       });
+      error.customData = {
+        nextAppUser,
+      };
     }
     throw error;
   }

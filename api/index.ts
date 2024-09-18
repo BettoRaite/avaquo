@@ -3,7 +3,6 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import axios from "axios";
 import { z } from "zod";
 import status from "http-status-codes";
-import { connect } from "../src/hooks/useTextTranslate";
 
 const RAPID_API_KEY = process.env.RAPID_API_KEY;
 
@@ -26,7 +25,6 @@ export default async function (
   request: VercelRequest,
   response: VercelResponse
 ) {
-  console.log(await connect.secret);
   if (request.method !== "GET") {
     return response.status(status.BAD_REQUEST).send({
       errorMessage: "Unsupported method.",

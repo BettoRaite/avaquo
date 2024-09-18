@@ -31,7 +31,7 @@
   text-transform: uppercase;
 
   font-weight: 800;
-  font-size: 0.715rem;
+  font-size: 0.715rem !important;
 
   letter-spacing: 0.2rem;
   color: var(--neon-green);
@@ -45,7 +45,7 @@
 
   text-align: center;
 
-  font-size: 1.53rem;
+  font-size: 1.53rem !important;
   font-weight: 900;
   color: var(--light-cyan);
 }
@@ -130,7 +130,7 @@
   width: fit-content;
   font-weight: bold;
   font-family: monospace;
-  font-size: 1rem;
+  font-size: 1rem !important;
   clip-path: inset(0 3ch 0 0);
   animation: l4 2s steps(4) infinite;
 }
@@ -147,7 +147,7 @@
     width: 30rem;
   }
   .adviceText {
-    font-size: 1.4rem;
+    font-size: 1.4rem !important;
     margin-bottom: 2rem;
   }
   .patternDivider {

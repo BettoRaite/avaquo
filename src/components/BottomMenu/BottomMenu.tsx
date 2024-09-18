@@ -9,19 +9,21 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../AuthProvider/authContext";
 import { handleSignOut } from "../../lib/db/firebase";
-import { AppError } from "../../lib/utils/errors";
+import { AppError } from "../../lib/utils/error";
 import type { ContentType } from "../../routes/Root/Root";
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
-  AlertDialogDescription,
+  // AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/AlertDialog/AlertDialog";
+import { useToastNotificationContext } from "../ToastNotificationProvider/toastNotificationContext";
+import { useTranslation } from "react-i18next";
 
 type BottomMenuProps = {
   onShowContent: (contentType: ContentType) => void;
@@ -30,6 +32,8 @@ type BottomMenuProps = {
 export function BottomMenu({ onShowContent }: BottomMenuProps) {
   const [isContentVisible, setIsContentVisible] = useState(false);
   const { user } = useAuth();
+  const { setToastNotification } = useToastNotificationContext();
+  const { t } = useTranslation();
   // [-]: handle errors.
   async function handleLogout() {
     if (!user) {
@@ -42,6 +46,7 @@ export function BottomMenu({ onShowContent }: BottomMenuProps) {
       await handleSignOut();
     } catch (error) {
       console.error("Unexpected error has occured during sign out.", error);
+      setToastNotification(t("sign_out_error"));
     }
   }
   function handleClick(content?: ContentType) {

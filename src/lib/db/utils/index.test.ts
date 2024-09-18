@@ -1,7 +1,7 @@
 import { getAdviceIdWithSameContent } from ".";
 import { adviceCollectionRef } from "../firebase";
 import { query, where, getDocs, type QuerySnapshot } from "firebase/firestore";
-import type { AdviceItem } from "../../utils/types";
+import type { AdviceItem } from "../../utils/definitions";
 
 vi.mock("firebase/firestore");
 

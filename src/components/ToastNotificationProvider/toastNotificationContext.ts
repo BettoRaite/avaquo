@@ -1,13 +1,12 @@
+import { useContext, createContext } from "react";
 import {
-  useContext,
-  createContext,
-  type Dispatch,
-  type SetStateAction,
-} from "react";
+  ToastNotification,
+  ToastNotificationType,
+} from "@/lib/utils/definitions";
 
 type ToastNotificationModel = {
-  toastNotification: string;
-  setToastNotification: Dispatch<SetStateAction<string>>;
+  toastNotification: ToastNotification;
+  setToastNotification: (message: string, type?: ToastNotificationType) => void;
 };
 
 export function useToastNotificationContext() {

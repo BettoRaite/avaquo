@@ -1,10 +1,10 @@
 .layout {
   width: 40rem;
   max-width: 80%;
+
   padding: 2rem;
 
   display: grid;
-  grid-template-rows: auto 1fr;
 
   position: absolute;
   top: 3rem;
@@ -16,9 +16,6 @@
 
   border-radius: var(--border-radius);
   transition: transform 0.3s ease, opacity 0.3s ease;
-}
-.layoutLocked {
-  color: var(--light-cyan);
 }
 .cardsLayout {
   margin-top: 1rem;

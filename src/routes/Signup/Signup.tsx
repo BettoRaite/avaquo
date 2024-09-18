@@ -14,6 +14,8 @@ import { FormField } from "../../components/FormField/FormField";
 import { ERROR_MESSAGES } from "../../lib/utils/constants";
 import { AuthWithProviderButton } from "../../components/AuthWithProviderButton/AuthWithProviderButton";
 import { Divider } from "@/components/Divider/Divider";
+import { errorLogger } from "@/lib/utils/errorLogger";
+import { FirebaseError } from "firebase/app";
 
 export function Signup() {
   const [errorMessage, setErrorMessage] = useState("");
@@ -43,26 +45,30 @@ export function Signup() {
       validate={validator}
       validateOnChange={true}
       validateOnBlur={false}
-      onSubmit={async (values, { setErrors }) => {
+      onSubmit={async (credentials, { setErrors }) => {
         try {
-          const errors = validator(values);
+          const errors = validator(credentials);
           if (Object.keys(errors).length > 0) {
             setErrors(errors);
             return;
           }
 
-          const errorObject = await handleEmailPasswordSignUp(values);
+          await handleEmailPasswordSignUp(credentials);
+          navigate("/verify");
+        } catch (error) {
+          errorLogger(
+            "Unexpected error during sign-up has occurred.",
+            error as Error,
+            credentials
+          );
 
-          if (errorObject) {
+          if (error instanceof FirebaseError) {
             const message =
-              FIREBASE_ERROR_MESSAGES[errorObject.code] ?? errorObject.message;
+              FIREBASE_ERROR_MESSAGES[error.code] ?? error.message;
             setErrorMessage(capitalizeFirstLetter(message));
           } else {
-            navigate("/verify");
+            setErrorMessage(t("unexpected_error"));
           }
-        } catch (error) {
-          console.error("Unexpected error during sign-up has occurred.", error);
-          setErrorMessage(t("unexpected_error"));
         }
       }}
     >

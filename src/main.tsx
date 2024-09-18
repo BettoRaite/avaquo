@@ -2,7 +2,7 @@ import "./index.css";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { AuthProvider } from "./components/AuthProvider/AuthProvider";
-import { AppUserProvider } from "./components/AppUserProvider/AppUserProvider";
+import { AppUserProvider } from "./components/AppUserProvider/AppUserProvider.tsx";
 import { AdviceCollectionProvider } from "./components/AdviceCollectionProvider/AdviceCollectionProvider";
 import { ToastNotificationProvider } from "./components/ToastNotificationProvider/ToastNotificationProvider";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
@@ -12,7 +12,6 @@ import { Signup } from "./routes/Signup/Signup";
 import { Login } from "./routes/Login/Login";
 import { VerifyEmail } from "./routes/VerifyEmail/VerifyEmail";
 import { ForgotPassword } from "./routes/ForgotPassword/ForgotPassword";
-import { ResetPassword } from "./routes/ResetPassword/ResetPassword";
 import "./i18n.ts";
 import { LocaleProvider } from "./components/LocaleProvider/LocaleProvider";
 
@@ -48,7 +47,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root") as HTMLElement).render(
   <StrictMode>
     <LocaleProvider>
-      <ToastNotificationProvider>
+      <ToastNotificationProvider seconds={6}>
         <AuthProvider>
           <AppUserProvider>
             <AdviceCollectionProvider>

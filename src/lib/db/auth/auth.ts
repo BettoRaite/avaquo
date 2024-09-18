@@ -8,24 +8,13 @@ import {
   signInWithPopup,
 } from "firebase/auth";
 import { authSchema } from "../../schemas/schemas";
-import type { AuthProviders } from "../../utils/types";
+import type { AuthProviders } from "../../utils/definitions";
 
 export async function handleEmailPasswordSignUp(
   params: ReturnType<typeof authSchema.parse>
 ) {
-  try {
-    const { email, password } = authSchema.parse(params);
-    await createUserWithEmailAndPassword(auth, email, password);
-  } catch (error) {
-    if (error instanceof FirebaseError) {
-      console.error("Failed to sign up user", error);
-      return {
-        message: error.message,
-        code: error.code,
-      };
-    }
-    throw error;
-  }
+  const { email, password } = authSchema.parse(params);
+  await createUserWithEmailAndPassword(auth, email, password);
 }
 export async function handleSignInWithPopup(provider: AuthProviders) {
   try {

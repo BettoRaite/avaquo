@@ -9,7 +9,7 @@
   "show_password": "Show password",
   "invalid_input_hint": "Invalid input",
   "unexpected_error": "Oops... it seems an unexpected error occurred. Please try again or try later.",
-  "unexpected_error_during_fetch": "Oops... it seems an unexpected error occurred. Please try refreshing the page.",
+  "unexpected_error_during_fetch": "Seems like there is a connection error, try refreshing the page.",
   "already_have_account": "Already have an account?",
   "log_in": "Log in",
   "forgot_password": "Forgot password?",
@@ -52,5 +52,7 @@
   "loading_message": "Loading, please wait...",
   "home": "home",
   "get_link": "Get link",
-  "receive_reset_password_link": "Get reset password link"
+  "receive_reset_password_link": "Get reset password link",
+  "sign_out_error": "Ops...failed to sign you out. Check your internet connection or refresh the page.",
+  "name_is_taken": "Name is taken"
 }

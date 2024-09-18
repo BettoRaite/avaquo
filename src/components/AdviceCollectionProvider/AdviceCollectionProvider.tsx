@@ -6,9 +6,9 @@ import {
 import { useAppUserContext } from "../AppUserProvider/appUserContext";
 import { useAuth } from "../AuthProvider/authContext";
 import { getAdviceCollection } from "../../lib/db/firebase";
-import type { AdviceItem } from "../../lib/utils/types";
+import type { AdviceItem } from "../../lib/utils/definitions";
 import { errorLogger } from "@/lib/utils/errorLogger";
-import { AppError } from "@/lib/utils/errors";
+import { AppError } from "@/lib/utils/error";
 
 type AdviceCollectionProviderProps = {
   children: React.ReactNode;
